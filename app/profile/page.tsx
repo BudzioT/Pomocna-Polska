@@ -21,12 +21,15 @@ export default async function ProfilePage() {
     include: {
       requests: { orderBy: { createdAt: "desc" }, take: 5 },
       assignedTasks: { orderBy: { createdAt: "desc" }, take: 5 },
-      _count: { select: { requests: true, assignedTasks: true } }
     }
   });
 
-  const requestsCount = user?._count?.requests || 0;
-  const helpsCount = user?._count?.assignedTasks || 0;
+  const requestsCount = await prisma.helpRequest.count({
+    where: { authorId: userId, status: "COMPLETED" },
+  });
+  const helpsCount = await prisma.helpRequest.count({
+    where: { volunteerId: userId, status: "COMPLETED" },
+  });
 
   // Merge and sort history
   const history = [
@@ -51,6 +54,7 @@ export default async function ProfilePage() {
   // Fetch all active conversations where this user is author or volunteer
   const activeChats = await prisma.conversation.findMany({
     where: {
+      request: { status: "IN_PROGRESS" },
       OR: [
         { request: { authorId: userId } },
         { volunteerId: userId },

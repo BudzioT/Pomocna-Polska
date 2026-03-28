@@ -55,6 +55,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const conversation = await prisma.conversation.findUnique({
+      where: { id: conversationId },
+      include: { request: true },
+    });
+
+    if (!conversation) {
+      return NextResponse.json({ error: "Nie znaleziono konwersacji" }, { status: 404 });
+    }
+
+    if (conversation.request.status === "COMPLETED") {
+      return NextResponse.json({ error: "Nie można wysyłać wiadomości w zakończonej sprawie" }, { status: 403 });
+    }
+
     const message = await prisma.message.create({
       data: {
         body,
