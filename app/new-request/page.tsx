@@ -41,10 +41,10 @@ export default function NewRequestPage() {
   return (
     <div className="bg-surface font-body text-on-surface min-h-screen pb-32 w-full max-w-[390px] md:max-w-full mx-auto">
       {/* Header */}
-      <header className="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-[#FBFBE2] shadow-sm max-w-[390px] md:max-w-full">
+      <header className="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-[#f5f5dd] shadow-sm max-w-[390px] md:max-w-full">
         <div className="flex items-center gap-2">
-          <span className="material-symbols-outlined text-[#8F000D]">volunteer_activism</span>
-          <h1 className="font-headline font-extrabold text-xl text-[#8F000D] tracking-tight">
+          <span className="material-symbols-outlined text-[#563d91]">volunteer_activism</span>
+          <h1 className="font-headline font-extrabold text-xl text-[#563d91] tracking-tight">
             Nowa prośba
           </h1>
         </div>

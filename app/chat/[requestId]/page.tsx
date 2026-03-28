@@ -205,7 +205,7 @@ export default function ChatPage({ params }: ChatPageProps) {
             <div className="relative">
               {chatPartner?.avatarUrl && (
                 <Image
-                  alt="User Avatar"
+                  alt="Zdjęcie rozmówcy"
                   className="w-10 h-10 rounded-full border-2 border-primary/10"
                   src={chatPartner.avatarUrl}
                   width={40}

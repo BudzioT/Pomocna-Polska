@@ -44,6 +44,8 @@ export default async function ProfilePage() {
       ? "Wolontariusz"
       : displayRole === "SEEKER"
       ? "Szukający pomocy"
+      : displayRole === "BOTH"
+      ? "Wolontariusz i Szukający"
       : displayRole;
 
   // Fetch all IN_PROGRESS requests where this user is author or volunteer
@@ -69,74 +71,76 @@ export default async function ProfilePage() {
   return (
     <div className="bg-surface font-body text-on-surface min-h-screen pb-32 w-full max-w-[390px] md:max-w-full mx-auto relative">
       {/* Header */}
-      <header className="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-[#FBFBE2] shadow-sm max-w-[390px] md:max-w-full">
+      <header className="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-[#f5f5dd] shadow-sm max-w-[390px] md:max-w-full">
         <div className="flex items-center gap-3">
-          <span className="material-symbols-outlined text-[#8F000D] text-2xl">volunteer_activism</span>
-          <h1 className="font-['Plus_Jakarta_Sans'] font-extrabold text-xl text-[#8F000D] tracking-tight">Mój profil</h1>
+          <span className="material-symbols-outlined text-[#563d91] text-2xl">volunteer_activism</span>
+          <h1 className="font-['Plus_Jakarta_Sans'] font-extrabold text-xl text-[#563d91] tracking-tight">Mój profil</h1>
         </div>
-        <button className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#F5F5DC] transition-colors active:scale-95 duration-150">
-          <span className="material-symbols-outlined text-[#1B1D0E]">edit</span>
+        <button className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary/10 transition-colors active:scale-95 duration-150">
+          <span className="material-symbols-outlined text-[#1C1B1F]">edit</span>
         </button>
       </header>
 
       <main className="pt-20 px-4">
-        {/* Avatar + name */}
-        <section className="mt-4 flex flex-col items-center">
-          <div className="relative">
-            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-surface-container-highest shadow-xl">
-              {avatarUrl ? (
-                <Image
-                  alt="Avatar użytkownika"
-                  className="w-full h-full object-cover"
-                  src={avatarUrl}
-                  width={128}
-                  height={128}
-                />
-              ) : (
-                <div className="w-full h-full bg-primary-container text-on-primary-container flex items-center justify-center">
-                  <span className="material-symbols-outlined text-6xl">person</span>
-                </div>
-              )}
+        <div className="mt-4 flex flex-row items-start justify-between gap-4">
+          {/* Avatar + name (Left) */}
+          <section className="flex flex-col items-center text-center w-1/2">
+            <div className="relative">
+              <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-surface-container-highest shadow-xl">
+                {avatarUrl ? (
+                  <Image
+                    alt="Avatar użytkownika"
+                    className="w-full h-full object-cover"
+                    src={avatarUrl}
+                    width={112}
+                    height={112}
+                  />
+                ) : (
+                  <div className="w-full h-full bg-primary-container text-on-primary-container flex items-center justify-center">
+                    <span className="material-symbols-outlined text-5xl">person</span>
+                  </div>
+                )}
+              </div>
+              <div className="absolute bottom-0 right-0 bg-secondary rounded-full p-2 border-4 border-surface shadow-lg">
+                <span
+                  className="material-symbols-outlined text-on-secondary text-xs"
+                  style={{ fontVariationSettings: "'FILL' 1" }}
+                >
+                  verified
+                </span>
+              </div>
             </div>
-            <div className="absolute bottom-0 right-0 bg-secondary rounded-full p-2 border-4 border-surface shadow-lg">
-              <span
-                className="material-symbols-outlined text-on-secondary text-sm"
-                style={{ fontVariationSettings: "'FILL' 1" }}
-              >
-                verified
-              </span>
+            <div className="mt-5 flex flex-col items-center">
+              <h2 className="text-2xl font-extrabold text-on-surface tracking-tight leading-tight">{displayName}</h2>
+              <div className="flex items-center justify-center gap-1.5 text-on-surface-variant mt-1.5">
+                <span className="material-symbols-outlined text-sm">phone</span>
+                <span className="text-sm font-medium">{displayPhone}</span>
+              </div>
+              <div className="mt-2.5 inline-flex items-center justify-center gap-1 bg-primary-container text-on-primary-container px-3 py-1 rounded-full text-xs font-bold">
+                <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>
+                  {displayRole === "VOLUNTEER" ? "favorite" : "front_hand"}
+                </span>
+                {roleLabel}
+              </div>
             </div>
-          </div>
-          <div className="text-center mt-6">
-            <h2 className="text-3xl font-extrabold text-on-surface tracking-tight">{displayName}</h2>
-            <div className="flex items-center justify-center gap-1 text-on-surface-variant mt-1">
-              <span className="material-symbols-outlined text-sm">phone</span>
-              <span className="text-sm font-medium">{displayPhone}</span>
-            </div>
-            <div className="mt-2 inline-flex items-center gap-1 bg-primary-container text-on-primary-container px-3 py-1 rounded-full text-xs font-bold">
-              <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>
-                {displayRole === "VOLUNTEER" ? "favorite" : "front_hand"}
-              </span>
-              {roleLabel}
-            </div>
-          </div>
-        </section>
+          </section>
 
-        {/* Stats */}
-        <section className="mt-4 grid grid-cols-3 gap-3">
-          <div className="bg-surface-container-lowest p-4 rounded-2xl shadow-sm text-center border-b-2 border-primary/10">
-            <p className="text-2xl font-extrabold text-primary">{helpsCount}</p>
-            <p className="text-[10px] font-bold text-on-surface-variant leading-none mt-1">Udzielona pomoc</p>
-          </div>
-          <div className="bg-surface-container-lowest p-4 rounded-2xl shadow-sm text-center border-b-2 border-secondary/10">
-            <p className="text-2xl font-extrabold text-secondary">{requestsCount}</p>
-            <p className="text-[10px] font-bold text-on-surface-variant leading-none mt-1">Otrzymana pomoc</p>
-          </div>
-          <div className="bg-surface-container-lowest p-4 rounded-2xl shadow-sm text-center border-b-2 border-primary/10">
-            <p className="text-2xl font-extrabold text-on-surface">0</p>
-            <p className="text-[10px] font-bold text-on-surface-variant leading-none mt-1">Poręczenia</p>
-          </div>
-        </section>
+          {/* Stats (Right) */}
+          <section className="flex flex-col gap-3 w-1/2">
+            <div className="bg-surface-container-lowest p-3 rounded-2xl shadow-sm text-center border-r-4 border-primary/20 flex flex-col justify-center transition-transform hover:scale-105">
+              <p className="text-xl font-extrabold text-primary leading-none">{helpsCount}</p>
+              <p className="text-[10px] font-bold text-on-surface-variant leading-tight mt-1">Udzielona pomoc</p>
+            </div>
+            <div className="bg-surface-container-lowest p-3 rounded-2xl shadow-sm text-center border-r-4 border-secondary/20 flex flex-col justify-center transition-transform hover:scale-105">
+              <p className="text-xl font-extrabold text-secondary leading-none">{requestsCount}</p>
+              <p className="text-[10px] font-bold text-on-surface-variant leading-tight mt-1">Otrzymana pomoc</p>
+            </div>
+            <div className="bg-surface-container-lowest p-3 rounded-2xl shadow-sm text-center border-r-4 border-primary/10 flex flex-col justify-center transition-transform hover:scale-105">
+              <p className="text-xl font-extrabold text-on-surface leading-none">0</p>
+              <p className="text-[10px] font-bold text-on-surface-variant leading-tight mt-1">Poręczenia</p>
+            </div>
+          </section>
+        </div>
 
         {/* Active Chats */}
         <section className="mt-8 mb-6">

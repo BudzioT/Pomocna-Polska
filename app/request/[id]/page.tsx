@@ -53,7 +53,7 @@ export default async function RequestDetailsPage({ params }: RequestDetailsPageP
               arrow_back
             </span>
           </Link>
-          <h1 className="text-[#8F000D] font-extrabold text-xl font-headline tracking-tight">
+          <h1 className="text-[#6B21A8] font-extrabold text-xl font-headline tracking-tight">
             Szczegóły
           </h1>
         </div>

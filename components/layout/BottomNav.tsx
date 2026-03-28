@@ -13,7 +13,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { href: "/map", icon: "location_on", label: "Mapa", permission: canViewFeed },
-  { href: "/feed", icon: "list_alt", label: "Feed", permission: canViewFeed },
+  { href: "/feed", icon: "list_alt", label: "Ogłoszenia", permission: canViewFeed },
   { href: "/new-request", icon: "add_circle", label: "Dodaj", permission: canRequestHelp },
   { href: "/profile", icon: "person", label: "Profil" },
 ];
@@ -26,7 +26,7 @@ export default function BottomNav({ role }: { role?: string }) {
   );
 
   return (
-    <nav className="fixed bottom-0 left-0 w-full z-40 flex justify-around items-center px-4 pb-6 pt-3 bg-[#FBFBE2]/90 backdrop-blur-md rounded-t-[24px] border-t border-[#E2BEBA]/20 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] w-full max-w-[390px] md:max-w-full mx-auto right-0">
+    <nav className="fixed bottom-0 left-0 w-full z-40 flex justify-around items-center px-4 pb-6 pt-3 bg-[#f5f5dd]/90 backdrop-blur-md rounded-t-[24px] border-t border-[#e2beba]/20 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] w-full max-w-[390px] md:max-w-full mx-auto right-0">
       {visibleItems.map(({ href, icon, label }) => {
         const isActive = pathname === href;
         return (
@@ -35,8 +35,8 @@ export default function BottomNav({ role }: { role?: string }) {
             href={href}
             className={`flex flex-col items-center justify-center transition-opacity hover:opacity-80 ${
               isActive
-                ? "text-[#8F000D] font-bold scale-110"
-                : "text-[#1B1D0E]/60"
+                ? "text-[#563d91] font-bold scale-110"
+                : "text-[#1C1B1F]/60"
             }`}
           >
             <span

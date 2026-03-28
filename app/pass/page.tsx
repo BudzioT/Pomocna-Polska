@@ -76,7 +76,7 @@ function PassForm() {
   return (
     <div className="bg-surface text-on-surface min-h-screen flex flex-col items-center w-full max-w-[390px] md:max-w-full mx-auto relative overflow-hidden">
       {/* Header */}
-      <header className="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-[#FBFBE2] shadow-sm max-w-[390px] md:max-w-full">
+      <header className="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-[#f5f5dd] shadow-sm max-w-[390px] md:max-w-full">
         <Link
           href={`/register?${searchParams.toString()}`}
           className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-surface-container-low transition-colors active:scale-95"

@@ -8,21 +8,21 @@ export default async function SeniorHomePage() {
   return (
     <div className="bg-surface text-on-surface antialiased overflow-x-hidden min-h-screen w-full max-w-[390px] md:max-w-full mx-auto relative pb-32">
       {/* Header */}
-      <header className="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-5 bg-[#FBFBE2] shadow-sm w-full max-w-[390px] md:max-w-full">
+      <header className="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-5 bg-[#f5f5dd] shadow-sm w-full max-w-[390px] md:max-w-full">
         <div className="flex items-center gap-3">
           <span
-            className="material-symbols-outlined text-[#8F000D]"
+            className="material-symbols-outlined text-[#563d91]"
             style={{ fontSize: "2.5rem" }}
           >
             volunteer_activism
           </span>
-          <h1 className="font-['Plus_Jakarta_Sans'] font-extrabold text-2xl tracking-tight text-[#8F000D]">
+          <h1 className="font-['Plus_Jakarta_Sans'] font-extrabold text-2xl tracking-tight text-[#563d91]">
             Pomocna Polska
           </h1>
         </div>
-        <button className="w-14 h-14 flex items-center justify-center rounded-full hover:bg-[#F5F5DC] transition-colors active:scale-95">
+        <button className="w-14 h-14 flex items-center justify-center rounded-full hover:bg-primary/10 transition-colors active:scale-95">
           <span
-            className="material-symbols-outlined text-[#8F000D]"
+            className="material-symbols-outlined text-[#563d91]"
             style={{ fontSize: "2.5rem" }}
           >
             notifications
