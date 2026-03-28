@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 import BottomNav from "@/components/layout/BottomNav";
 import { Map, MapMarker, MarkerContent, MapControls } from "@/components/ui/map";
 
@@ -27,7 +28,14 @@ const pins: MapPin[] = [
   },
 ];
 
-export default function MapPage() {
+export default async function MapPage() {
+  const cookieStore = await cookies();
+  const role = cookieStore.get("user_role")?.value;
+
+  // SEEKER sees only their own requests. For now, we mock an empty array or their own mock pins.
+  // We'll show an empty array for SEEKER to demonstrate hiding other requests.
+  const displayPins = role === "SEEKER" ? [] : pins;
+
   return (
     <div className="bg-surface text-on-surface min-h-screen w-full max-w-[390px] md:max-w-full mx-auto overflow-hidden relative shadow-2xl">
       {/* Header */}
@@ -50,7 +58,7 @@ export default function MapPage() {
             viewport={{ center: [21.025, 52.195], zoom: 13 }}
             className="w-full h-full"
           >
-            {pins.map(({ id, icon, href, longitude, latitude }) => (
+            {displayPins.map(({ id, icon, href, longitude, latitude }) => (
               <MapMarker key={id} longitude={longitude} latitude={latitude}>
                 <MarkerContent>
                   <Link href={href} className="block cursor-pointer">
@@ -66,35 +74,47 @@ export default function MapPage() {
         </div>
 
         {/* Bottom sheet */}
-        <div className="absolute bottom-0 left-0 w-full bg-surface rounded-t-[32px] shadow-[0_-8px_24px_rgba(0,0,0,0.12)] p-6 z-30 pb-32">
-          <div className="flex items-start justify-between">
-            <div className="flex flex-col gap-1">
-              <span className="text-secondary font-bold text-xs tracking-widest uppercase">
-                Najbliżej Ciebie
-              </span>
-              <h2 className="text-2xl font-extrabold text-on-surface leading-tight">
-                Pomoc Sąsiedzka: Mokotów
-              </h2>
-              <div className="flex items-center gap-2 mt-1">
-                <span className="material-symbols-outlined text-outline text-sm">
-                  distance
+        {displayPins.length > 0 ? (
+          <div className="absolute bottom-0 left-0 w-full bg-surface rounded-t-[32px] shadow-[0_-8px_24px_rgba(0,0,0,0.12)] p-6 z-30 pb-32">
+            <div className="flex items-start justify-between">
+              <div className="flex flex-col gap-1">
+                <span className="text-secondary font-bold text-xs tracking-widest uppercase">
+                  Najbliżej Ciebie
                 </span>
-                <span className="text-on-surface-variant text-sm font-medium">
-                  450m stąd
-                </span>
+                <h2 className="text-2xl font-extrabold text-on-surface leading-tight">
+                  Pomoc Sąsiedzka: Mokotów
+                </h2>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="material-symbols-outlined text-outline text-sm">
+                    distance
+                  </span>
+                  <span className="text-on-surface-variant text-sm font-medium">
+                    450m stąd
+                  </span>
+                </div>
               </div>
             </div>
+            <Link
+              href="/request/r2"
+              className="mt-4 block w-full py-4 bg-primary text-on-primary rounded-xl font-bold text-center active:scale-95 transition-transform"
+            >
+              Zobacz szczegóły
+            </Link>
           </div>
-          <Link
-            href="/request/r2"
-            className="mt-4 block w-full py-4 bg-primary text-on-primary rounded-xl font-bold text-center active:scale-95 transition-transform"
-          >
-            Zobacz szczegóły
-          </Link>
-        </div>
+        ) : (
+          <div className="absolute bottom-0 left-0 w-full bg-surface rounded-t-[32px] shadow-[0_-8px_24px_rgba(0,0,0,0.12)] p-6 z-30 pb-32 text-center">
+            <span className="material-symbols-outlined text-on-surface-variant text-4xl mb-2">location_off</span>
+            <h2 className="text-xl font-extrabold text-on-surface leading-tight">
+              Brak zgłoszeń
+            </h2>
+            <p className="text-sm text-on-surface-variant mt-2 font-medium">
+              Nie masz aktywnych próśb o pomoc w swojej okolicy.
+            </p>
+          </div>
+        )}
       </main>
 
-      <BottomNav />
+      <BottomNav role={role} />
     </div>
   );
 }

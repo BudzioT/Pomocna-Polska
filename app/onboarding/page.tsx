@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 
@@ -37,28 +39,37 @@ export default function OnboardingPage() {
           </p>
         </section>
 
-        {/* Actions */}
-        <section className="p-8 pb-12 flex flex-col items-center gap-8 md:px-24 md:mt-12">
-          <div className="flex gap-2">
-            <div className="w-8 h-2 rounded-full bg-primary" />
-            <div className="w-2 h-2 rounded-full bg-outline-variant" />
-            <div className="w-2 h-2 rounded-full bg-outline-variant" />
-          </div>
+        {/* Choice cards */}
+        <section className="p-8 flex flex-col items-center gap-4 md:px-24 md:mt-8">
           <div className="w-full max-w-sm flex flex-col gap-4">
+            {/* Register */}
             <Link
               href="/role"
-              className="w-full h-14 bg-primary text-on-primary font-bold text-lg rounded-xl shadow-sm hover:bg-primary-container active:scale-95 transition-all flex items-center justify-center gap-2 group"
+              className="group w-full p-5 bg-primary text-on-primary rounded-2xl shadow-lg hover:bg-primary/90 active:scale-95 transition-all flex items-center gap-4"
             >
-              Dalej
-              <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">
-                arrow_forward
-              </span>
+              <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center shrink-0">
+                <span className="material-symbols-outlined text-2xl">person_add</span>
+              </div>
+              <div className="text-left">
+                <p className="font-extrabold text-lg leading-tight">Zarejestruj się</p>
+                <p className="text-sm text-on-primary/70 font-medium">Jestem tu po raz pierwszy</p>
+              </div>
+              <span className="material-symbols-outlined ml-auto group-hover:translate-x-1 transition-transform">arrow_forward</span>
             </Link>
+
+            {/* Login */}
             <Link
-              href="/register"
-              className="w-full py-2 text-on-surface-variant font-semibold text-sm hover:text-primary transition-colors text-center"
+              href="/login"
+              className="group w-full p-5 bg-surface-container-lowest border-2 border-outline-variant/40 rounded-2xl hover:bg-surface-container-low active:scale-95 transition-all flex items-center gap-4"
             >
-              Pomiń
+              <div className="w-12 h-12 bg-surface-container-high rounded-xl flex items-center justify-center shrink-0">
+                <span className="material-symbols-outlined text-2xl text-primary">login</span>
+              </div>
+              <div className="text-left">
+                <p className="font-extrabold text-lg text-on-surface leading-tight">Zaloguj się</p>
+                <p className="text-sm text-on-surface-variant font-medium">Mam już konto</p>
+              </div>
+              <span className="material-symbols-outlined ml-auto text-on-surface-variant group-hover:translate-x-1 transition-transform">arrow_forward</span>
             </Link>
           </div>
         </section>

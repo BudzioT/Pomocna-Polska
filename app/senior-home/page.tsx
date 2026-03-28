@@ -1,7 +1,10 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 import BottomNav from "@/components/layout/BottomNav";
 
-export default function SeniorHomePage() {
+export default async function SeniorHomePage() {
+  const cookieStore = await cookies();
+  const role = cookieStore.get("user_role")?.value;
   return (
     <div className="bg-surface text-on-surface antialiased overflow-x-hidden min-h-screen w-full max-w-[390px] md:max-w-full mx-auto relative pb-32">
       {/* Header */}
@@ -113,7 +116,7 @@ export default function SeniorHomePage() {
         </section>
       </main>
 
-      <BottomNav />
+      <BottomNav role={role} />
     </div>
   );
 }

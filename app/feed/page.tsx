@@ -1,16 +1,26 @@
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import BottomNav from "@/components/layout/BottomNav";
 import RequestCard from "@/components/ui/RequestCard";
 import { mockRequests } from "@/lib/mockData";
+import { canViewFeed } from "@/lib/permissions";
 
-export default function FeedPage() {
+export default async function FeedPage() {
+  const cookieStore = await cookies();
+  const role = cookieStore.get("user_role")?.value;
+
+  if (!canViewFeed(role)) {
+    // SEEKER cannot view other people's requests
+    redirect("/no-access?reason=feed");
+  }
+
   return (
     <div className="bg-surface font-body text-on-surface min-h-screen flex flex-col w-full max-w-[390px] md:max-w-full mx-auto overflow-x-hidden relative pb-24">
       {/* Background pattern */}
       <div
         className="fixed inset-0 pointer-events-none -z-10"
         style={{
-          backgroundImage:
-            "radial-gradient(circle at 2px 2px, #e2beba 1px, transparent 0)",
+          backgroundImage: "radial-gradient(circle at 2px 2px, #e2beba 1px, transparent 0)",
           backgroundSize: "24px 24px",
           opacity: 0.1,
         }}
@@ -19,12 +29,8 @@ export default function FeedPage() {
       {/* Header */}
       <header className="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-[#FBFBE2] shadow-sm w-full max-w-[390px] md:max-w-full">
         <div className="flex items-center gap-2">
-          <span className="material-symbols-outlined text-[#8F000D]">
-            volunteer_activism
-          </span>
-          <h1 className="font-headline font-extrabold text-xl text-[#8F000D] tracking-tight">
-            Pomocna Polska
-          </h1>
+          <span className="material-symbols-outlined text-[#8F000D]">volunteer_activism</span>
+          <h1 className="font-headline font-extrabold text-xl text-[#8F000D] tracking-tight">Pomocna Polska</h1>
         </div>
         <div className="flex items-center gap-4">
           <button className="material-symbols-outlined text-[#1B1D0E] hover:bg-[#F5F5DC] p-2 rounded-full transition-colors active:scale-95 duration-150">
@@ -37,9 +43,7 @@ export default function FeedPage() {
         {/* Search + filters */}
         <section className="mt-4 mb-6">
           <div className="bg-surface-container-low rounded-xl flex items-center px-4 py-3 mb-4">
-            <span className="material-symbols-outlined text-on-surface-variant mr-3">
-              search
-            </span>
+            <span className="material-symbols-outlined text-on-surface-variant mr-3">search</span>
             <input
               className="bg-transparent border-none focus:ring-0 text-body font-medium placeholder-on-surface-variant/60 w-full outline-none"
               placeholder="Czego szukasz?"
@@ -58,20 +62,12 @@ export default function FeedPage() {
 
         {/* Requests list */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          <RequestCard
-            request={mockRequests[0]}
-            href="/feed/modal"
-            accentColor="primary"
-          />
-          <RequestCard
-            request={mockRequests[1]}
-            href="/request/r2"
-            accentColor="secondary"
-          />
+          <RequestCard request={mockRequests[0]} href="/feed/modal" accentColor="primary" />
+          <RequestCard request={mockRequests[1]} href="/request/r2" accentColor="secondary" />
         </div>
       </main>
 
-      <BottomNav />
+      <BottomNav role={role} />
     </div>
   );
 }
