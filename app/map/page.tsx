@@ -39,12 +39,12 @@ export default async function MapPage() {
   return (
     <div className="bg-surface text-on-surface min-h-screen w-full max-w-[390px] md:max-w-full mx-auto overflow-hidden relative shadow-2xl">
       {/* Header */}
-      <header className="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-[#FBFBE2] shadow-sm w-full max-w-[390px] md:max-w-full">
+      <header className="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-[#f5f5dd] shadow-sm w-full max-w-[390px] md:max-w-full">
         <div className="flex items-center gap-2">
-          <span className="material-symbols-outlined text-[#8F000D] text-2xl">
+          <span className="material-symbols-outlined text-[#563d91] text-2xl">
             volunteer_activism
           </span>
-          <h1 className="font-['Plus_Jakarta_Sans'] font-extrabold text-xl tracking-tight text-[#8F000D]">
+          <h1 className="font-['Plus_Jakarta_Sans'] font-extrabold text-xl tracking-tight text-[#563d91]">
             Pomocna Polska
           </h1>
         </div>

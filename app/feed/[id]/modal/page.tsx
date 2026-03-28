@@ -48,7 +48,7 @@ export default function FeedModalPage({ params }: FeedModalPageProps) {
         className="absolute inset-0 pointer-events-none"
         style={{
           backgroundImage:
-            "radial-gradient(circle at 2px 2px, #e2beba 1px, transparent 0)",
+            "radial-gradient(circle at 2px 2px, #c4b5d6 1px, transparent 0)",
           backgroundSize: "24px 24px",
           opacity: 0.1,
         }}

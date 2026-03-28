@@ -14,7 +14,7 @@ export default function AppHeader({
   rightSlot,
 }: AppHeaderProps) {
   return (
-    <header className="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-[#FBFBE2] shadow-sm w-full max-w-[390px] md:max-w-full">
+    <header className="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-[#f5f5dd] shadow-sm w-full max-w-[390px] md:max-w-full">
       <div className="flex items-center gap-3">
         {showBack && (
           <Link
@@ -28,10 +28,10 @@ export default function AppHeader({
         )}
         {!showBack && (
           <>
-            <span className="material-symbols-outlined text-[#8F000D]">
+            <span className="material-symbols-outlined text-[#563d91]">
               volunteer_activism
             </span>
-            <span className="font-headline font-extrabold text-xl tracking-tight text-[#8F000D]">
+            <span className="font-headline font-extrabold text-xl tracking-tight text-[#563d91]">
               {title ?? "Pomocna Polska"}
             </span>
           </>

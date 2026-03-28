@@ -56,13 +56,13 @@ export default async function FeedPage() {
       />
 
       {/* Header */}
-      <header className="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-[#FBFBE2] shadow-sm max-w-[390px] md:max-w-full">
+      <header className="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-[#f5f5dd] shadow-sm max-w-[390px] md:max-w-full">
         <div className="flex items-center gap-2">
-          <span className="material-symbols-outlined text-[#8F000D]">volunteer_activism</span>
-          <h1 className="font-headline font-extrabold text-xl text-[#8F000D] tracking-tight">Pomocna Polska</h1>
+          <span className="material-symbols-outlined text-[#563d91]">volunteer_activism</span>
+          <h1 className="font-headline font-extrabold text-xl text-[#563d91] tracking-tight">Pomocna Polska</h1>
         </div>
         <div className="flex items-center gap-4">
-          <button className="material-symbols-outlined text-[#1B1D0E] hover:bg-[#F5F5DC] p-2 rounded-full transition-colors active:scale-95 duration-150">
+          <button className="material-symbols-outlined text-[#1C1B1F] hover:bg-primary/10 p-2 rounded-full transition-colors active:scale-95 duration-150">
             notifications
           </button>
         </div>
