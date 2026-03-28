@@ -72,10 +72,10 @@ model HelpRequest {
   updatedAt DateTime @updatedAt
 
   authorId String
-  author   User   @relation("AuthorRequests", fields: [authorId], references: [id])
+  author   User   @relation("AuthorRequests", fields: [authorId], references: [id], onDelete: Cascade)
 
   volunteerId String?
-  volunteer   User?   @relation("AssignedVolunteer", fields: [volunteerId], references: [id])
+  volunteer   User?   @relation("AssignedVolunteer", fields: [volunteerId], references: [id], onDelete: SetNull)
 
   conversations     Conversation[]
 
@@ -89,9 +89,9 @@ model Message {
   createdAt      DateTime     @default(now())
 
   senderId       String
-  sender         User         @relation("SentMessages", fields: [senderId], references: [id])
+  sender         User         @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
   conversationId String
-  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
 
   @@index([senderId])
   @@index([conversationId])
@@ -100,9 +100,9 @@ model Message {
 model Conversation {
   id          String      @id @default(uuid())
   requestId   String
-  request     HelpRequest @relation(fields: [requestId], references: [id])
+  request     HelpRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
   volunteerId String
-  volunteer   User        @relation("ConversationVolunteer", fields: [volunteerId], references: [id])
+  volunteer   User        @relation("ConversationVolunteer", fields: [volunteerId], references: [id], onDelete: Cascade)
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
   messages    Message[]
@@ -120,7 +120,7 @@ model Notification {
   createdAt DateTime @default(now())
 
   userId String
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }

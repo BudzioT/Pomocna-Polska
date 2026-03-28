@@ -10,6 +10,7 @@ function hashPassword(password: string): string {
 async function main() {
   // Clean up existing data (order matters for foreign keys)
   await prisma.message.deleteMany();
+  await prisma.conversation.deleteMany();
   await prisma.notification.deleteMany();
   await prisma.helpRequest.deleteMany();
   await prisma.user.deleteMany();
@@ -145,40 +146,56 @@ async function main() {
   const now = new Date();
   
   // Chat for r1 (Maria needs help, Anna is volunteer)
+  const conv1 = await prisma.conversation.create({
+    data: {
+      id: "c1",
+      requestId: request1.id,
+      volunteerId: anna.id,
+    },
+  });
+
   await prisma.message.createMany({
     data: [
       {
         id: "m1",
         body: "Dzień dobry! Dziękuję za zgłoszenie. Czy moglibyśmy się umówić na jutro około godziny 10:00?",
         senderId: anna.id,
-        requestId: request1.id,
+        conversationId: conv1.id,
         createdAt: new Date(now.getTime() - 3600_000), // 1 hour ago
       },
       {
         id: "m2",
         body: "Oczywiście, godzina 10:00 bardzo mi odpowiada. Gdzie dokładnie mam podejść?",
         senderId: maria.id,
-        requestId: request1.id,
+        conversationId: conv1.id,
         createdAt: new Date(now.getTime() - 3000_000), // 50 min ago
       },
     ],
   });
 
   // Chat for r5 (Jan offers help, Halina accepted)
+  const conv5 = await prisma.conversation.create({
+    data: {
+      id: "c5",
+      requestId: request5.id,
+      volunteerId: halina.id,
+    },
+  });
+
   await prisma.message.createMany({
     data: [
       {
         id: "m3",
         body: "Panie Janie, ja bym bardzo chciała, żeby mi pan pokazał, jak odebrać e-Receptę na telefonie.",
         senderId: halina.id,
-        requestId: request5.id,
+        conversationId: conv5.id,
         createdAt: new Date(now.getTime() - 7200_000), // 2 hours ago
       },
       {
         id: "m4",
         body: "Dzień dobry Pani Halino! Jasne. Możemy się zdzwonić dzisiaj wieczorem i spróbuję to krok po kroku wytłumaczyć.",
         senderId: jan.id,
-        requestId: request5.id,
+        conversationId: conv5.id,
         createdAt: new Date(now.getTime() - 6500_000), // ~110 min ago
       },
     ],
