@@ -18,7 +18,7 @@ export async function GET(
         request: {
           include: {
             author: {
-              select: { id: true, name: true, avatarUrl: true },
+              select: { id: true, name: true, avatarUrl: true, phoneNumber: true },
             },
           },
         },

@@ -18,7 +18,7 @@ export default async function RequestDetailsPage({ params }: RequestDetailsPageP
     where: { id },
     include: {
       author: {
-        select: { id: true, name: true, avatarUrl: true },
+        select: { id: true, name: true, avatarUrl: true, phoneNumber: true },
       },
     },
   });
@@ -92,9 +92,17 @@ export default async function RequestDetailsPage({ params }: RequestDetailsPageP
               </span>
             </div>
             <div>
-              <h3 className="text-lg font-bold text-on-surface">
-                {request.author.name}
-              </h3>
+              <div className="flex items-center gap-2">
+                <h3 className="text-lg font-bold text-on-surface">
+                  {request.author.name}
+                </h3>
+                {request.type === "REMOTE" && currentUserId && request.authorId !== currentUserId && request.author.phoneNumber && (
+                  <a href={`tel:${request.author.phoneNumber}`} className="flex items-center gap-1 text-[12px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full hover:bg-primary/20 transition-colors border border-primary/20 shadow-sm">
+                    <span className="material-symbols-outlined text-[14px]">call</span>
+                    {request.author.phoneNumber}
+                  </a>
+                )}
+              </div>
               {request.address && (
                 <div className="flex items-center gap-1 text-sm text-on-surface-variant">
                   <span className="material-symbols-outlined text-[16px]">

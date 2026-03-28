@@ -221,9 +221,17 @@ export default function ChatPage({ params }: ChatPageProps) {
               <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-surface rounded-full" />
             </div>
             <div className="flex flex-col">
-              <span className="font-bold text-on-surface tracking-tight leading-tight">
-                {chatPartner?.name ?? "Rozmówca"}
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-on-surface tracking-tight leading-tight">
+                  {chatPartner?.name ?? "Rozmówca"}
+                </span>
+                {conversation?.request?.type === "REMOTE" && currentUserId === conversation?.volunteerId && chatPartner?.phoneNumber && (
+                  <a href={`tel:${chatPartner.phoneNumber}`} className="flex items-center gap-1 text-[11px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full hover:bg-primary/20 transition-colors border border-primary/20">
+                    <span className="material-symbols-outlined text-[12px]">call</span>
+                    {chatPartner.phoneNumber}
+                  </a>
+                )}
+              </div>
               {conversation && (
                 <span className="text-[10px] font-bold uppercase tracking-wider text-secondary truncate max-w-[180px]">
                   {conversation.request.title}
