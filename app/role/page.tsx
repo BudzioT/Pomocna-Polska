@@ -83,25 +83,6 @@ export default function RoleSelectionPage() {
               <div className="w-6 h-6 rounded-full border-2 border-outline-variant flex items-center justify-center" />
             </div>
           </div>
-
-          {/* Decorative image */}
-          <div className="mt-12 flex justify-center">
-            <div className="relative w-full h-48 rounded-[32px] overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent z-10" />
-              <Image
-                alt="Community"
-                className="w-full h-full object-cover grayscale opacity-50"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuC-QCyPyszqYdoIIhtDilrPS0KsKNb13V3g1kgDvmA8ddFuuBnARrPw_5ht1NoF8G-JWZhzdXbu-HhngSlo2PMNzAGOuFmNKxrAGniJcBnWMGSFU4ur8YwLiKuU3vhOPkn3uwn1zhxdGDvRWv_p58UwJEot_n4XUFfRA4cC3xQj-P2W2NUBRm3ocjXbANI4O9FsOrkdrVP-EgOcFEYQo3Tg0PbnBEmQgXEMlH4Ztm7Mc9fr_64MTe8EbNVXVg-pK2m7AopKQPAmcKAP"
-                fill
-                sizes="390px"
-              />
-              <div className="absolute bottom-4 left-6 z-20">
-                <span className="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
-                  Wspólnota
-                </span>
-              </div>
-            </div>
-          </div>
         </div>
       </main>
 
