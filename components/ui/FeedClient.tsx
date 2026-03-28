@@ -115,6 +115,9 @@ export default function FeedClient({ requests }: FeedClientProps) {
             { id: "MEDICINE", label: "Medycyna" },
             { id: "TRANSPORT", label: "Transport" },
             { id: "COMPANIONSHIP", label: "Towarzystwo" },
+            { id: "EDUCATION", label: "Edukacja" },
+            { id: "ANIMALS", label: "Zwierzęta" },
+            { id: "HOUSEHOLD", label: "Dom" },
             { id: "OTHER", label: "Inne" },
           ].map((cat) => (
             <button
@@ -208,6 +211,7 @@ export default function FeedClient({ requests }: FeedClientProps) {
               </div>
             )}
           </div>
+        </div>
 
           {/* Active filters indicator */}
           {(query || selectedLocation || selectedCategory) && (
@@ -225,7 +229,6 @@ export default function FeedClient({ requests }: FeedClientProps) {
               Wyczyść filtry
             </button>
           )}
-        </div>
       </section>
 
       {/* ── Results counter ── */}

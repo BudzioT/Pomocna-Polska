@@ -35,6 +35,7 @@ export default async function FeedPage() {
     category: r.category || "OTHER",
     type: r.type,
     address: r.address,
+    tags: Array.isArray(r.tags) ? r.tags : (typeof r.tags === 'string' ? JSON.parse(r.tags) : []),
     createdAt: r.createdAt.toISOString(),
     author: {
       id: r.author.id,

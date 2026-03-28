@@ -12,6 +12,9 @@ const categoryIcons: Record<string, string> = {
   medicine: "health_and_safety",
   transport: "directions_car",
   companionship: "favorite",
+  education: "school",
+  animals: "pets",
+  household: "cleaning_services",
   other: "help",
 };
 

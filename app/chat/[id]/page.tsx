@@ -200,45 +200,66 @@ export default function ChatPage({ params }: ChatPageProps) {
               arrow_back
             </span>
           </Link>
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              {chatPartner?.avatarUrl && (
-                <Image
-                  alt="Zdjęcie rozmówcy"
-                  className="w-10 h-10 rounded-full border-2 border-primary/10"
-                  src={chatPartner.avatarUrl}
-                  width={40}
-                  height={40}
-                />
-              )}
-              {!chatPartner?.avatarUrl && (
-                <div className="w-10 h-10 rounded-full border-2 border-primary/10 bg-primary-fixed flex items-center justify-center">
-                  <span className="material-symbols-outlined text-primary">
-                    person
+          {chatPartner?.id ? (
+            <Link href={`/profile/${chatPartner.id}`} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+              <div className="relative">
+                {chatPartner?.avatarUrl && (
+                  <Image
+                    alt="Zdjęcie rozmówcy"
+                    className="w-10 h-10 rounded-full border-2 border-primary/10"
+                    src={chatPartner.avatarUrl}
+                    width={40}
+                    height={40}
+                  />
+                )}
+                {!chatPartner?.avatarUrl && (
+                  <div className="w-10 h-10 rounded-full border-2 border-primary/10 bg-primary-fixed flex items-center justify-center">
+                    <span className="material-symbols-outlined text-primary">
+                      person
+                    </span>
+                  </div>
+                )}
+                <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-surface rounded-full" />
+              </div>
+              <div className="flex flex-col">
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-on-surface tracking-tight leading-tight">
+                    {chatPartner?.name ?? "Rozmówca"}
                   </span>
+                  {conversation?.request?.type === "REMOTE" && currentUserId === conversation?.volunteerId && chatPartner?.phoneNumber && (
+                    <object>
+                      <a href={`tel:${chatPartner.phoneNumber}`} onClick={(e) => e.stopPropagation()} className="flex items-center gap-1 text-[11px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full hover:bg-primary/20 transition-colors border border-primary/20 inline-flex">
+                        <span className="material-symbols-outlined text-[12px]">call</span>
+                        {chatPartner.phoneNumber}
+                      </a>
+                    </object>
+                  )}
                 </div>
-              )}
-              <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-surface rounded-full" />
-            </div>
-            <div className="flex flex-col">
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-on-surface tracking-tight leading-tight">
-                  {chatPartner?.name ?? "Rozmówca"}
-                </span>
-                {conversation?.request?.type === "REMOTE" && currentUserId === conversation?.volunteerId && chatPartner?.phoneNumber && (
-                  <a href={`tel:${chatPartner.phoneNumber}`} className="flex items-center gap-1 text-[11px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full hover:bg-primary/20 transition-colors border border-primary/20">
-                    <span className="material-symbols-outlined text-[12px]">call</span>
-                    {chatPartner.phoneNumber}
-                  </a>
+                {conversation && (
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-secondary truncate max-w-[180px]">
+                    {conversation.request.title}
+                  </span>
                 )}
               </div>
-              {conversation && (
-                <span className="text-[10px] font-bold uppercase tracking-wider text-secondary truncate max-w-[180px]">
-                  {conversation.request.title}
+            </Link>
+          ) : (
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                {!chatPartner?.avatarUrl && (
+                  <div className="w-10 h-10 rounded-full border-2 border-primary/10 bg-primary-fixed flex items-center justify-center">
+                    <span className="material-symbols-outlined text-primary">
+                      person
+                    </span>
+                  </div>
+                )}
+              </div>
+              <div className="flex flex-col">
+                <span className="font-bold text-on-surface tracking-tight leading-tight">
+                  Rozmówca
                 </span>
-              )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
         {conversation?.request?.status !== "COMPLETED" && currentUserId === conversation?.request?.authorId && (
            <button

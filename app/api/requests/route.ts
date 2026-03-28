@@ -91,6 +91,32 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    let category = "OTHER";
+    if (process.env.AI_API) {
+      try {
+        const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.AI_API}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: `Analyze the following help request description and classify it into EXACTLY ONE of these categories: SHOPPING, MEDICINE, TRANSPORT, COMPANIONSHIP, EDUCATION, ANIMALS, HOUSEHOLD, or OTHER. Return ONLY the category name as plain text (e.g. SHOPPING) and nothing else. Description: ${description}` }] }]
+          })
+        });
+
+        if (geminiRes.ok) {
+          const geminiData = await geminiRes.json();
+          const textRes = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (textRes) {
+            const cleaned = textRes.trim().toUpperCase();
+            if (["SHOPPING", "MEDICINE", "TRANSPORT", "COMPANIONSHIP", "EDUCATION", "ANIMALS", "HOUSEHOLD", "OTHER"].includes(cleaned)) {
+              category = cleaned;
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Gemini category failed:", err);
+      }
+    }
+
     const request = await prisma.helpRequest.create({
       data: {
         title,
@@ -100,7 +126,7 @@ export async function POST(req: NextRequest) {
         latitude: finalLat && !isNaN(finalLat) ? finalLat : null,
         longitude: finalLng && !isNaN(finalLng) ? finalLng : null,
         status: "OPEN",
-        category: "OTHER",
+        category,
         authorId: userId,
       } as any
     });
