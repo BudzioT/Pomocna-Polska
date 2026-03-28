@@ -2,22 +2,22 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 
 /**
- * GET /api/messages?requestId=<id>
- * Returns all messages for a given help request, ordered chronologically.
+ * GET /api/messages?conversationId=<id>
+ * Returns all messages for a given conversation, ordered chronologically.
  */
 export async function GET(request: NextRequest) {
-  const requestId = request.nextUrl.searchParams.get("requestId");
+  const conversationId = request.nextUrl.searchParams.get("conversationId");
 
-  if (!requestId) {
+  if (!conversationId) {
     return NextResponse.json(
-      { error: "requestId query parameter is required" },
+      { error: "conversationId query parameter is required" },
       { status: 400 }
     );
   }
 
   try {
     const messages = await prisma.message.findMany({
-      where: { requestId },
+      where: { conversationId },
       orderBy: { createdAt: "asc" },
       include: {
         sender: {
@@ -42,15 +42,15 @@ export async function GET(request: NextRequest) {
 
 /**
  * POST /api/messages
- * Creates a new message. Body: { requestId, senderId, body }
+ * Creates a new message. Body: { conversationId, senderId, body }
  */
 export async function POST(request: NextRequest) {
   try {
-    const { requestId, senderId, body } = await request.json();
+    const { conversationId, senderId, body } = await request.json();
 
-    if (!requestId || !senderId || !body) {
+    if (!conversationId || !senderId || !body) {
       return NextResponse.json(
-        { error: "requestId, senderId, and body are required" },
+        { error: "conversationId, senderId, and body are required" },
         { status: 400 }
       );
     }
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
       data: {
         body,
         senderId,
-        requestId,
+        conversationId,
       },
       include: {
         sender: {

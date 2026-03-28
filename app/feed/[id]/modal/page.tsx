@@ -1,11 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { use } from "react";
-
-const CURRENT_USER_ID = "u1";
 
 interface FeedModalPageProps {
   params: Promise<{ id: string }>;
@@ -14,27 +12,39 @@ interface FeedModalPageProps {
 export default function FeedModalPage({ params }: FeedModalPageProps) {
   const { id: requestId } = use(params);
   const router = useRouter();
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [accepting, setAccepting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    setCurrentUserId(localStorage.getItem("user_id"));
+  }, []);
+
   const handleAccept = async () => {
+    if (!currentUserId) {
+      setError("Musisz być zalogowany, by nawiązać z kimś kontakt.");
+      return;
+    }
+    
     setAccepting(true);
     setError(null);
 
     try {
-      const res = await fetch(`/api/requests/${requestId}/accept`, {
+      const res = await fetch(`/api/conversations`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ volunteerId: CURRENT_USER_ID }),
+        body: JSON.stringify({ requestId, volunteerId: currentUserId }),
       });
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Nie udało się zaakceptować");
+        throw new Error(data.error || "Nie udało się otworzyć konwersacji");
       }
 
-      // Success — redirect to chat
-      router.push(`/chat/${requestId}`);
+      const conversation = await res.json();
+
+      // Success — redirect to the new conversation chat
+      router.push(`/chat/${conversation.id}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Wystąpił błąd");
       setAccepting(false);

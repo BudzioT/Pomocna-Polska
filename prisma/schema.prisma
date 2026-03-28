@@ -53,6 +53,7 @@ model User {
   assignedTasks HelpRequest[]  @relation("AssignedVolunteer")
   sentMessages  Message[]      @relation("SentMessages")
   notifications Notification[]
+  conversationsAsVolunteer Conversation[] @relation("ConversationVolunteer")
 }
 
 model HelpRequest {
@@ -76,23 +77,38 @@ model HelpRequest {
   volunteerId String?
   volunteer   User?   @relation("AssignedVolunteer", fields: [volunteerId], references: [id])
 
-  messages Message[]
+  conversations     Conversation[]
 
   @@index([authorId])
   @@index([volunteerId])
 }
 
 model Message {
-  id        String   @id @default(uuid())
-  body      String   @db.Text
-  createdAt DateTime @default(now())
+  id             String       @id @default(uuid())
+  body           String       @db.Text
+  createdAt      DateTime     @default(now())
 
-  senderId  String
-  sender    User        @relation("SentMessages", fields: [senderId], references: [id])
-  requestId String
-  request   HelpRequest @relation(fields: [requestId], references: [id])
+  senderId       String
+  sender         User         @relation("SentMessages", fields: [senderId], references: [id])
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
 
   @@index([senderId])
+  @@index([conversationId])
+}
+
+model Conversation {
+  id          String      @id @default(uuid())
+  requestId   String
+  request     HelpRequest @relation(fields: [requestId], references: [id])
+  volunteerId String
+  volunteer   User        @relation("ConversationVolunteer", fields: [volunteerId], references: [id])
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  messages    Message[]
+
+  @@unique([requestId, volunteerId])
+  @@index([volunteerId])
   @@index([requestId])
 }
 

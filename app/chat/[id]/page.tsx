@@ -6,18 +6,18 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { DbMessage, DbHelpRequest } from "@/types";
 
-const CURRENT_USER_ID = "u1";
 const POLL_INTERVAL_MS = 3000;
 
 interface ChatPageProps {
-  params: Promise<{ requestId: string }>;
+  params: Promise<{ id: string }>;
 }
 
 export default function ChatPage({ params }: ChatPageProps) {
   const router = useRouter();
-  const [requestId, setRequestId] = useState<string>("");
+  const [conversationId, setConversationId] = useState<string>("");
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [messages, setMessages] = useState<DbMessage[]>([]);
-  const [helpRequest, setHelpRequest] = useState<DbHelpRequest | null>(null);
+  const [conversation, setConversation] = useState<any | null>(null);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
@@ -25,16 +25,20 @@ export default function ChatPage({ params }: ChatPageProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  useEffect(() => {
+    setCurrentUserId(localStorage.getItem("user_id"));
+  }, []);
+
   // Resolve params
   useEffect(() => {
-    params.then(({ requestId: id }) => setRequestId(id));
+    params.then(({ id }) => setConversationId(id));
   }, [params]);
 
   // Determine who the chat partner is
-  const chatPartner = helpRequest
-    ? helpRequest.authorId === CURRENT_USER_ID
-      ? helpRequest.volunteer
-      : helpRequest.author
+  const chatPartner = conversation
+    ? conversation.request.authorId === currentUserId
+      ? conversation.volunteer
+      : conversation.request.author
     : null;
 
   // Scroll to bottom when messages change
@@ -42,71 +46,66 @@ export default function ChatPage({ params }: ChatPageProps) {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Fetch help request details
-  const fetchRequest = useCallback(async () => {
-    if (!requestId) return;
+  // Fetch conversation details
+  const fetchConversation = useCallback(async () => {
+    if (!conversationId || !currentUserId) return;
     try {
-      const res = await fetch(`/api/requests/${requestId}`);
-      if (!res.ok) throw new Error("Request not found");
-      const data: DbHelpRequest = await res.json();
-
-      // Guard: only allow chat for IN_PROGRESS requests
-      if (data.status !== "IN_PROGRESS") {
-        router.push("/feed");
-        return;
-      }
+      const res = await fetch(`/api/conversations/${conversationId}`);
+      if (!res.ok) throw new Error("Conversation not found");
+      const data = await res.json();
 
       // Guard: current user must be author or volunteer
-      if (data.authorId !== CURRENT_USER_ID && data.volunteerId !== CURRENT_USER_ID) {
+      if (data.request.authorId !== currentUserId && data.volunteerId !== currentUserId) {
         router.push("/feed");
         return;
       }
 
-      setHelpRequest(data);
+      setConversation(data);
     } catch {
       setError("Nie udało się załadować konwersacji");
     }
-  }, [requestId, router]);
+  }, [conversationId, router, currentUserId]);
 
   // Fetch messages
   const fetchMessages = useCallback(async () => {
-    if (!requestId) return;
+    if (!conversationId) return;
     try {
-      const res = await fetch(`/api/messages?requestId=${requestId}`);
+      const res = await fetch(`/api/messages?conversationId=${conversationId}`);
       if (!res.ok) throw new Error("Failed to fetch");
       const data: DbMessage[] = await res.json();
       setMessages(data);
     } catch {
       console.error("Failed to fetch messages");
     }
-  }, [requestId]);
+  }, [conversationId]);
 
   // Initial load
   useEffect(() => {
-    if (!requestId) return;
+    if (!conversationId || !currentUserId) return;
 
     const init = async () => {
       setLoading(true);
-      await fetchRequest();
+      await fetchConversation();
       await fetchMessages();
       setLoading(false);
     };
 
     init();
-  }, [requestId, fetchRequest, fetchMessages]);
+  }, [conversationId, currentUserId, fetchConversation, fetchMessages]);
 
   // Polling for new messages
   useEffect(() => {
-    if (!requestId || loading) return;
+    if (!conversationId || loading) return;
 
     pollRef.current = setInterval(fetchMessages, POLL_INTERVAL_MS);
     return () => {
       if (pollRef.current) clearInterval(pollRef.current);
     };
-  }, [requestId, loading, fetchMessages]);
+  }, [conversationId, loading, fetchMessages]);
 
   // Send a message
   const handleSend = async () => {
+    if (!currentUserId) return;
     const text = input.trim();
     if (!text || sending) return;
 
@@ -117,14 +116,14 @@ export default function ChatPage({ params }: ChatPageProps) {
       id: `temp-${Date.now()}`,
       body: text,
       createdAt: new Date().toISOString(),
-      senderId: CURRENT_USER_ID,
-      requestId,
+      senderId: currentUserId,
+      conversationId: conversationId,
       sender: {
-        id: CURRENT_USER_ID,
+        id: currentUserId,
         name: "Ty",
         avatarUrl: null,
       },
-    };
+    } as any;
 
     setMessages((prev) => [...prev, optimisticMsg]);
     setInput("");
@@ -134,8 +133,8 @@ export default function ChatPage({ params }: ChatPageProps) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          requestId,
-          senderId: CURRENT_USER_ID,
+          conversationId,
+          senderId: currentUserId,
           body: text,
         }),
       });
@@ -225,9 +224,9 @@ export default function ChatPage({ params }: ChatPageProps) {
               <span className="font-bold text-on-surface tracking-tight leading-tight">
                 {chatPartner?.name ?? "Rozmówca"}
               </span>
-              {helpRequest && (
+              {conversation && (
                 <span className="text-[10px] font-bold uppercase tracking-wider text-secondary truncate max-w-[180px]">
-                  {helpRequest.title}
+                  {conversation.request.title}
                 </span>
               )}
             </div>
@@ -272,7 +271,7 @@ export default function ChatPage({ params }: ChatPageProps) {
         {/* Message bubbles */}
         <div className="space-y-6">
           {messages.map((msg) => {
-            const isOwn = msg.senderId === CURRENT_USER_ID;
+            const isOwn = msg.senderId === currentUserId;
             return (
               <div
                 key={msg.id}

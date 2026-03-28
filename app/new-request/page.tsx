@@ -15,6 +15,10 @@ export default function NewRequestPage() {
   const [location, setLocation] = useState("");
   const [role, setRole] = useState<string | undefined>(undefined);
   const [checkingAuth, setCheckingAuth] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
+  const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
     // Read the user_role cookie on the client side
@@ -29,9 +33,51 @@ export default function NewRequestPage() {
     }
   }, [router]);
 
-  const handleSubmit = () => {
+  const handleGPS = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setLatitude(pos.coords.latitude);
+          setLongitude(pos.coords.longitude);
+          setLocation("Moja bieżąca lokalizacja (GPS)");
+        },
+        () => {
+          alert("Nie udało się pobrać lokalizacji GPS.");
+        }
+      );
+    } else {
+      alert("Twoja przeglądarka nie wspiera geolokalizacji.");
+    }
+  };
+
+  const handleSubmit = async () => {
     if (!description.trim()) return;
-    router.push(role === "SEEKER" ? "/profile" : "/map");
+    setLoading(true);
+    setErrorMsg("");
+    
+    try {
+      const res = await fetch("/api/requests", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          helpType,
+          description,
+          location,
+          latitude,
+          longitude
+        })
+      });
+      if (res.ok) {
+        router.push(role === "SEEKER" ? "/profile" : "/map");
+      } else {
+        const data = await res.json();
+        setErrorMsg(data.error || "Wystąpił błąd podczas dodawania.");
+        setLoading(false);
+      }
+    } catch (err) {
+      setErrorMsg("Błąd sieci. Spróbuj ponownie.");
+      setLoading(false);
+    }
   };
 
   if (checkingAuth) {
@@ -84,7 +130,7 @@ export default function NewRequestPage() {
                 </span>
                 <button 
                   className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors text-primary flex items-center gap-1 active:scale-95"
-                  onClick={() => setLocation("Moja bieżąca lokalizacja (GPS)")}
+                  onClick={handleGPS}
                 >
                   <span className="material-symbols-outlined text-[18px]">my_location</span>
                 </button>
@@ -142,13 +188,22 @@ export default function NewRequestPage() {
               </button>
               <button
                 onClick={handleSubmit}
-                className="flex-[2] md:flex-none py-4 px-6 rounded-xl font-bold text-on-primary bg-primary hover:bg-primary-container transition-all shadow-lg flex items-center justify-center gap-2 active:scale-95"
+                disabled={loading || !description.trim()}
+                className={`flex-[2] md:flex-none py-4 px-6 rounded-xl font-bold text-on-primary shadow-lg flex items-center justify-center gap-2 transition-all ${
+                  loading || !description.trim() ? "bg-primary/50 cursor-not-allowed" : "bg-primary hover:bg-primary-container active:scale-95"
+                }`}
               >
-                Gotowe
-                <span className="material-symbols-outlined">check</span>
+                {loading ? <span className="material-symbols-outlined animate-spin">progress_activity</span> : "Gotowe"}
+                {!loading && <span className="material-symbols-outlined">check</span>}
               </button>
             </div>
           </div>
+          
+          {errorMsg && (
+            <div className="mt-4 p-4 bg-error-container text-on-error-container rounded-xl font-medium text-sm text-center">
+              {errorMsg}
+            </div>
+          )}
         </div>
       </main>
 

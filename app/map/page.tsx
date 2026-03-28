@@ -2,6 +2,7 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import BottomNav from "@/components/layout/BottomNav";
 import { Map, MapMarker, MarkerContent, MapControls } from "@/components/ui/map";
+import { prisma } from "@/lib/db";
 
 interface MapPin {
   id: string;
@@ -9,32 +10,42 @@ interface MapPin {
   href: string;
   longitude: number;
   latitude: number;
+  title: string;
+  address: string | null;
 }
 
-const pins: MapPin[] = [
-  {
-    id: "p1",
-    icon: "shopping_basket",
-    href: "/request/r2",
-    longitude: 21.02,
-    latitude: 52.19,
-  },
-  {
-    id: "p2",
-    icon: "health_and_safety",
-    href: "/request/r1",
-    longitude: 21.03,
-    latitude: 52.20,
-  },
-];
+function getIconForCategory(category: string): string {
+  switch (category) {
+    case "SHOPPING": return "shopping_basket";
+    case "MEDICINE": return "health_and_safety";
+    case "TRANSPORT": return "directions_car";
+    case "COMPANIONSHIP": return "diversity_1";
+    default: return "live_help";
+  }
+}
 
 export default async function MapPage() {
   const cookieStore = await cookies();
   const role = cookieStore.get("user_role")?.value;
 
-  // SEEKER sees only their own requests. For now, we mock an empty array or their own mock pins.
-  // We'll show an empty array for SEEKER to demonstrate hiding other requests.
-  const displayPins = role === "SEEKER" ? [] : pins;
+  const rawRequests = await prisma.helpRequest.findMany({
+    where: { 
+      status: "OPEN",
+      latitude: { not: null },
+      longitude: { not: null },
+    },
+    orderBy: { createdAt: "desc" }
+  });
+
+  const displayPins: MapPin[] = role === "SEEKER" ? [] : (rawRequests as any[]).map(req => ({
+    id: req.id,
+    icon: getIconForCategory(req.category),
+    href: `/request/${req.id}`,
+    latitude: req.latitude!,
+    longitude: req.longitude!,
+    title: req.title,
+    address: req.address,
+  }));
 
   return (
     <div className="bg-surface text-on-surface min-h-screen w-full max-w-[390px] md:max-w-full mx-auto overflow-hidden relative shadow-2xl">
@@ -82,20 +93,20 @@ export default async function MapPage() {
                   Najbliżej Ciebie
                 </span>
                 <h2 className="text-2xl font-extrabold text-on-surface leading-tight">
-                  Pomoc Sąsiedzka: Mokotów
+                  {displayPins[0].title || "Pomoc Sąsiedzka"}
                 </h2>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="material-symbols-outlined text-outline text-sm">
                     distance
                   </span>
                   <span className="text-on-surface-variant text-sm font-medium">
-                    450m stąd
+                    {displayPins[0].address || "W twojej okolicy"}
                   </span>
                 </div>
               </div>
             </div>
             <Link
-              href="/request/r2"
+              href={displayPins[0].href}
               className="mt-4 block w-full py-4 bg-primary text-on-primary rounded-xl font-bold text-center active:scale-95 transition-transform"
             >
               Zobacz szczegóły

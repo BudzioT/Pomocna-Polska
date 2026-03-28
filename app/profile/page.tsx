@@ -48,18 +48,19 @@ export default async function ProfilePage() {
       ? "Wolontariusz i Szukający"
       : displayRole;
 
-  // Fetch all IN_PROGRESS requests where this user is author or volunteer
-  const activeChats = await prisma.helpRequest.findMany({
+  // Fetch all active conversations where this user is author or volunteer
+  const activeChats = await prisma.conversation.findMany({
     where: {
-      status: "IN_PROGRESS",
       OR: [
-        { authorId: userId },
+        { request: { authorId: userId } },
         { volunteerId: userId },
       ],
     },
     include: {
-      author: {
-        select: { id: true, name: true, avatarUrl: true },
+      request: {
+        include: {
+          author: { select: { id: true, name: true, avatarUrl: true } }
+        }
       },
       volunteer: {
         select: { id: true, name: true, avatarUrl: true },
@@ -166,9 +167,9 @@ export default async function ProfilePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
               {activeChats.map((chat: any) => {
                 const partner =
-                  chat.authorId === userId
+                  chat.request.authorId === userId
                     ? chat.volunteer
-                    : chat.author;
+                    : chat.request.author;
                 const partnerName = partner?.name ?? "Rozmówca";
                 const isVolunteer = chat.volunteerId === userId;
 
@@ -179,13 +180,13 @@ export default async function ProfilePage() {
                     className="bg-surface-container-lowest p-4 rounded-2xl flex items-center justify-between hover:bg-surface-container-low transition-colors"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="text-3xl">
-                        {isVolunteer ? "😇" : "🤝"}
-                      </div>
-                      <div>
-                        <p className="font-bold text-on-surface leading-tight">
-                          {chat.title}
-                        </p>
+                       <div className="text-3xl">
+                         {isVolunteer ? "😇" : "🤝"}
+                       </div>
+                       <div>
+                         <p className="font-bold text-on-surface leading-tight">
+                           {chat.request.title}
+                         </p>
                         <p className="text-[12px] text-on-surface-variant">
                           Z: {partnerName}
                         </p>

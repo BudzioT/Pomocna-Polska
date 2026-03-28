@@ -52,7 +52,7 @@ export interface DbMessage {
   body: string;
   createdAt: string;
   senderId: string;
-  requestId: string;
+  conversationId: string;
   sender: DbUser;
 }
 

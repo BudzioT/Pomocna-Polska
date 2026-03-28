@@ -15,9 +15,18 @@ export async function POST(req: NextRequest) {
     const { seeker, volunteer } = await req.json();
     const role = resolveRole(!!seeker, !!volunteer);
 
+    const userResult = await prisma.user.findUnique({ where: { id: userId } });
+    if (!userResult) {
+      // DB was probably reset, tell client to re-login
+      const response = NextResponse.json({ error: "Sesja wygasła lub konto zostało usunięte." }, { status: 401 });
+      response.cookies.delete("user_id");
+      response.cookies.delete("user_role");
+      return response;
+    }
+
     await prisma.user.update({
       where: { id: userId },
-      data: { role },
+      data: { role: role as any },
     });
 
     const response = NextResponse.json({ ok: true, role });

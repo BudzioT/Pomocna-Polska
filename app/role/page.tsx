@@ -45,6 +45,10 @@ function RoleSelectionContent() {
           const { role } = await res.json();
           localStorage.setItem("user_role", role);
           router.push("/profile");
+        } else if (res.status === 401) {
+          localStorage.clear();
+          alert("Twoja sesja wygasła lub konto zostało usunięte z powodu czyszczenia bazy danych. Prosimy zalogować się ponownie.");
+          router.push("/login");
         } else {
           setLoading(false);
           alert("Wystąpił błąd podczas zmiany roli.");
