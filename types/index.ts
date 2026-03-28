@@ -37,3 +37,38 @@ export interface Message {
   text: string;
   sentAt: Date;
 }
+
+// ─── Database-aligned types (match API response shapes) ───────────────────────
+
+export interface DbUser {
+  id: string;
+  name: string;
+  avatarUrl: string | null;
+  role?: string;
+}
+
+export interface DbMessage {
+  id: string;
+  body: string;
+  createdAt: string;
+  senderId: string;
+  requestId: string;
+  sender: DbUser;
+}
+
+export interface DbHelpRequest {
+  id: string;
+  title: string;
+  description: string;
+  type: string;
+  status: string;
+  latitude: number | null;
+  longitude: number | null;
+  address: string | null;
+  createdAt: string;
+  updatedAt: string;
+  authorId: string;
+  volunteerId: string | null;
+  author: DbUser;
+  volunteer: DbUser | null;
+}

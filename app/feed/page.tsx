@@ -2,8 +2,10 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import BottomNav from "@/components/layout/BottomNav";
 import RequestCard from "@/components/ui/RequestCard";
-import { mockRequests } from "@/lib/mockData";
 import { canViewFeed } from "@/lib/permissions";
+import { prisma } from "@/lib/db";
+
+export const dynamic = "force-dynamic";
 
 export default async function FeedPage() {
   const cookieStore = await cookies();
@@ -13,6 +15,16 @@ export default async function FeedPage() {
     // SEEKER cannot view other people's requests
     redirect("/no-access?reason=feed");
   }
+
+  const requests = await prisma.helpRequest.findMany({
+    where: { status: "OPEN" },
+    orderBy: { createdAt: "desc" },
+    include: {
+      author: {
+        select: { id: true, name: true, avatarUrl: true },
+      },
+    },
+  });
 
   return (
     <div className="bg-surface font-body text-on-surface min-h-screen flex flex-col w-full max-w-[390px] md:max-w-full mx-auto overflow-x-hidden relative pb-24">
@@ -62,8 +74,37 @@ export default async function FeedPage() {
 
         {/* Requests list */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          <RequestCard request={mockRequests[0]} href="/feed/modal" accentColor="primary" />
-          <RequestCard request={mockRequests[1]} href="/request/r2" accentColor="secondary" />
+          {requests.length === 0 && (
+            <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
+              <span className="material-symbols-outlined text-5xl text-on-surface-variant/40 mb-3">
+                search_off
+              </span>
+              <p className="text-on-surface-variant font-medium">
+                Brak otwartych próśb o pomoc
+              </p>
+            </div>
+          )}
+          {requests.map((request: any, index: number) => (
+            <RequestCard
+              key={request.id}
+              request={{
+                id: request.id,
+                title: request.title,
+                description: request.description,
+                category: "other",
+                type: request.type === "IN_PERSON" ? "in-person" : "remote",
+                author: {
+                  id: request.author.id,
+                  name: request.author.name,
+                  avatarUrl: request.author.avatarUrl ?? undefined,
+                },
+                createdAt: new Date(request.createdAt),
+                status: "open",
+              }}
+              href={`/request/${request.id}`}
+              accentColor={index % 2 === 0 ? "primary" : "secondary"}
+            />
+          ))}
         </div>
       </main>
 

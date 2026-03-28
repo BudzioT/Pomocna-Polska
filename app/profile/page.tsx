@@ -1,24 +1,29 @@
 import Link from "next/link";
+import Image from "next/image";
 import { cookies } from "next/headers";
 import BottomNav from "@/components/layout/BottomNav";
 import { prisma } from "@/lib/db";
 import LogoutButton from "@/components/ui/LogoutButton";
 
+export const dynamic = "force-dynamic";
+
 export default async function ProfilePage() {
   const cookieStore = await cookies();
   const userId = cookieStore.get("user_id")?.value;
 
-  // Try to load real user from DB, fallback to cookie data
-  let user = userId
-    ? await prisma.user.findUnique({ 
-        where: { id: userId },
-        include: {
-          requests: { orderBy: { createdAt: "desc" }, take: 5 },
-          assignedTasks: { orderBy: { createdAt: "desc" }, take: 5 },
-          _count: { select: { requests: true, assignedTasks: true } }
-        }
-      })
-    : null;
+  if (!userId) {
+    return <div className="p-4 bg-surface text-on-surface h-screen">Zaloguj się, aby zobaczyć profil.</div>;
+  }
+
+  // Try to load real user from DB
+  let user = await prisma.user.findUnique({ 
+    where: { id: userId },
+    include: {
+      requests: { orderBy: { createdAt: "desc" }, take: 5 },
+      assignedTasks: { orderBy: { createdAt: "desc" }, take: 5 },
+      _count: { select: { requests: true, assignedTasks: true } }
+    }
+  });
 
   const requestsCount = user?._count?.requests || 0;
   const helpsCount = user?._count?.assignedTasks || 0;
@@ -32,6 +37,7 @@ export default async function ProfilePage() {
   const displayName = user?.name ?? cookieStore.get("user_name")?.value ?? "Użytkownik";
   const displayPhone = user?.phoneNumber ?? cookieStore.get("user_phone")?.value ?? "—";
   const displayRole = user?.role ?? cookieStore.get("user_role")?.value ?? "SEEKER";
+  const avatarUrl = user?.avatarUrl ?? null;
 
   const roleLabel =
     displayRole === "VOLUNTEER"
@@ -39,6 +45,26 @@ export default async function ProfilePage() {
       : displayRole === "SEEKER"
       ? "Szukający pomocy"
       : displayRole;
+
+  // Fetch all IN_PROGRESS requests where this user is author or volunteer
+  const activeChats = await prisma.helpRequest.findMany({
+    where: {
+      status: "IN_PROGRESS",
+      OR: [
+        { authorId: userId },
+        { volunteerId: userId },
+      ],
+    },
+    include: {
+      author: {
+        select: { id: true, name: true, avatarUrl: true },
+      },
+      volunteer: {
+        select: { id: true, name: true, avatarUrl: true },
+      },
+    },
+    orderBy: { updatedAt: "desc" },
+  });
 
   return (
     <div className="bg-surface font-body text-on-surface min-h-screen pb-32 w-full max-w-[390px] md:max-w-full mx-auto relative">
@@ -57,8 +83,20 @@ export default async function ProfilePage() {
         {/* Avatar + name */}
         <section className="mt-4 flex flex-col items-center">
           <div className="relative">
-            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-surface-container-highest shadow-xl bg-primary-container flex items-center justify-center">
-              <span className="material-symbols-outlined text-on-primary-container text-6xl">person</span>
+            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-surface-container-highest shadow-xl">
+              {avatarUrl ? (
+                <Image
+                  alt="Avatar użytkownika"
+                  className="w-full h-full object-cover"
+                  src={avatarUrl}
+                  width={128}
+                  height={128}
+                />
+              ) : (
+                <div className="w-full h-full bg-primary-container text-on-primary-container flex items-center justify-center">
+                  <span className="material-symbols-outlined text-6xl">person</span>
+                </div>
+              )}
             </div>
             <div className="absolute bottom-0 right-0 bg-secondary rounded-full p-2 border-4 border-surface shadow-lg">
               <span
@@ -100,6 +138,65 @@ export default async function ProfilePage() {
           </div>
         </section>
 
+        {/* Active Chats */}
+        <section className="mt-8 mb-6">
+          <h3 className="text-lg font-extrabold text-on-surface px-2 mb-4">
+            Aktywne rozmowy
+          </h3>
+          {activeChats.length === 0 ? (
+            <div className="bg-surface-container-lowest p-6 rounded-2xl text-center">
+              <span className="material-symbols-outlined text-4xl text-on-surface-variant/40 mb-2">
+                chat_bubble_outline
+              </span>
+              <p className="text-on-surface-variant font-medium text-sm">
+                Brak aktywnych rozmów
+              </p>
+              <Link
+                href="/feed"
+                className="inline-block mt-3 px-4 py-2 bg-primary text-on-primary rounded-xl font-bold text-sm"
+              >
+                Przeglądaj prośby
+              </Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {activeChats.map((chat: any) => {
+                const partner =
+                  chat.authorId === userId
+                    ? chat.volunteer
+                    : chat.author;
+                const partnerName = partner?.name ?? "Rozmówca";
+                const isVolunteer = chat.volunteerId === userId;
+
+                return (
+                  <Link
+                    key={chat.id}
+                    href={`/chat/${chat.id}`}
+                    className="bg-surface-container-lowest p-4 rounded-2xl flex items-center justify-between hover:bg-surface-container-low transition-colors"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="text-3xl">
+                        {isVolunteer ? "😇" : "🤝"}
+                      </div>
+                      <div>
+                        <p className="font-bold text-on-surface leading-tight">
+                          {chat.title}
+                        </p>
+                        <p className="text-[12px] text-on-surface-variant">
+                          Z: {partnerName}
+                        </p>
+                      </div>
+                    </div>
+                    <span className="material-symbols-outlined text-primary">
+                      chat
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+        </section>
+
         {/* Role settings */}
         <section className="mt-8 mb-6">
           <h3 className="text-lg font-extrabold text-on-surface px-2 mb-4">Ustawienia roli</h3>
@@ -123,7 +220,7 @@ export default async function ProfilePage() {
           {history.length === 0 ? (
             <p className="text-sm text-on-surface-variant px-2">Brak historii aktywności.</p>
           ) : (
-            <div className="space-y-3">
+             <div className="space-y-3">
               {history.map(item => (
                 <div key={item.id} className="bg-surface-container-lowest p-4 rounded-2xl shadow-sm flex items-start gap-4">
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${

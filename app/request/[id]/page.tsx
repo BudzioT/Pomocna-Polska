@@ -1,21 +1,23 @@
 import Link from "next/link";
-import { mockRequests } from "@/lib/mockData";
-import type { HelpRequest } from "@/types";
+import { prisma } from "@/lib/db";
 
 interface RequestDetailsPageProps {
   params: Promise<{ id: string }>;
 }
 
-const fullDescriptions: Record<string, string> = {
-  r1: "Dzień dobry, szukam kogoś, kto mógłby pomóc mi w przyniesieniu kilku podstawowych produktów ze sklepu. Mam ograniczoną mobilność i poruszanie się z ciężkimi siatkami jest dla mnie bardzo trudne.",
-  r2: "Dzień dobry, szukam kogoś, kto mógłby pomóc mi z większymi zakupami w najbliższy czwartek. Mam problem z kolanem i wniesienie siatek na trzecie piętro (bez windy) jest dla mnie obecnie niemożliwe.",
-};
+export const dynamic = "force-dynamic";
 
 export default async function RequestDetailsPage({ params }: RequestDetailsPageProps) {
   const { id } = await params;
-  const request: HelpRequest | undefined = mockRequests.find(
-    (r) => r.id === id
-  );
+
+  const request = await prisma.helpRequest.findUnique({
+    where: { id },
+    include: {
+      author: {
+        select: { id: true, name: true, avatarUrl: true },
+      },
+    },
+  });
 
   if (!request) {
     return (
@@ -36,7 +38,7 @@ export default async function RequestDetailsPage({ params }: RequestDetailsPageP
     );
   }
 
-  const description = fullDescriptions[request.id] ?? request.description;
+  const typeLabel = request.type === "IN_PERSON" ? "Na miejscu" : "Zdalnie";
 
   return (
     <div className="bg-surface text-on-surface antialiased min-h-screen pb-40 w-full max-w-[390px] md:max-w-full mx-auto relative">
@@ -73,12 +75,12 @@ export default async function RequestDetailsPage({ params }: RequestDetailsPageP
               <h3 className="text-lg font-bold text-on-surface">
                 {request.author.name}
               </h3>
-              {request.distanceKm && (
+              {request.address && (
                 <div className="flex items-center gap-1 text-sm text-on-surface-variant">
                   <span className="material-symbols-outlined text-[16px]">
                     location_on
                   </span>
-                  <span>{request.distanceKm} km od Ciebie</span>
+                  <span>{request.address}</span>
                 </div>
               )}
             </div>
@@ -88,43 +90,62 @@ export default async function RequestDetailsPage({ params }: RequestDetailsPageP
         {/* Description */}
         <section className="mb-8">
           <p className="text-on-surface-variant leading-relaxed text-[1rem]">
-            {description}
+            {request.description}
           </p>
         </section>
 
         {/* Tags */}
         <section className="mb-8 flex flex-wrap gap-2">
-          <span className="px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full text-xs font-bold uppercase tracking-wider">
-            {request.category === "shopping" ? "Zakupy" : request.category}
-          </span>
           <span className="px-3 py-1 bg-surface-container-high text-on-surface rounded-full text-xs font-bold uppercase tracking-wider">
-            {request.type === "in-person" ? "Na miejscu" : "Zdalnie"}
+            {typeLabel}
           </span>
-          <span className="px-3 py-1 bg-primary-fixed text-primary rounded-full text-xs font-bold uppercase tracking-wider">
-            Pilne
+          <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
+            request.status === "OPEN"
+              ? "bg-primary-fixed text-primary"
+              : request.status === "IN_PROGRESS"
+              ? "bg-secondary-container text-on-secondary-container"
+              : "bg-surface-container-high text-on-surface"
+          }`}>
+            {request.status === "OPEN" ? "Otwarte" : request.status === "IN_PROGRESS" ? "W trakcie" : request.status}
           </span>
         </section>
       </main>
 
-      {/* Floating CTA */}
-      <div className="fixed bottom-0 left-0 w-full z-50 bg-[#FBFBE2]/95 backdrop-blur-md rounded-t-[24px] shadow-[0_-4px_24px_rgba(0,0,0,0.1)] px-6 pb-8 pt-4 w-full max-w-[390px] md:max-w-full mx-auto right-0">
-        <Link
-          href="/feed/modal"
-          className="block w-full h-16 bg-primary text-on-primary rounded-xl font-bold text-lg text-center flex items-center justify-center gap-3 shadow-lg shadow-primary/20 active:scale-95 transition-transform duration-150"
-        >
-          <span
-            className="material-symbols-outlined"
-            style={{ fontVariationSettings: "'FILL' 1" }}
+      {/* Floating CTA — only show for OPEN requests */}
+      {request.status === "OPEN" && (
+        <div className="fixed bottom-0 left-0 w-full z-50 bg-[#FBFBE2]/95 backdrop-blur-md rounded-t-[24px] shadow-[0_-4px_24px_rgba(0,0,0,0.1)] px-6 pb-8 pt-4 w-full max-w-[390px] md:max-w-full mx-auto right-0">
+          <Link
+            href={`/feed/${request.id}/modal`}
+            className="block w-full h-16 bg-primary text-on-primary rounded-xl font-bold text-lg text-center flex items-center justify-center gap-3 shadow-lg shadow-primary/20 active:scale-95 transition-transform duration-150"
           >
-            volunteer_activism
-          </span>
-          Chcę pomóc
-        </Link>
-      </div>
+            <span
+              className="material-symbols-outlined"
+              style={{ fontVariationSettings: "'FILL' 1" }}
+            >
+              volunteer_activism
+            </span>
+            Chcę pomóc
+          </Link>
+        </div>
+      )}
+
+      {/* If IN_PROGRESS and user is participant, show link to chat */}
+      {request.status === "IN_PROGRESS" && (
+        <div className="fixed bottom-0 left-0 w-full z-50 bg-[#FBFBE2]/95 backdrop-blur-md rounded-t-[24px] shadow-[0_-4px_24px_rgba(0,0,0,0.1)] px-6 pb-8 pt-4 w-full max-w-[390px] md:max-w-full mx-auto right-0">
+          <Link
+            href={`/chat/${request.id}`}
+            className="block w-full h-16 bg-secondary text-on-secondary rounded-xl font-bold text-lg text-center flex items-center justify-center gap-3 shadow-lg shadow-secondary/20 active:scale-95 transition-transform duration-150"
+          >
+            <span
+              className="material-symbols-outlined"
+              style={{ fontVariationSettings: "'FILL' 1" }}
+            >
+              chat
+            </span>
+            Otwórz czat
+          </Link>
+        </div>
+      )}
     </div>
   );
-}
-
-export function generateStaticParams() {
-  return mockRequests.map((r) => ({ id: r.id }));
 }
