@@ -232,6 +232,19 @@ export default function ChatPage({ params }: ChatPageProps) {
             </div>
           </div>
         </div>
+        {conversation?.request?.status !== "COMPLETED" && currentUserId === conversation?.request?.authorId && (
+           <button
+             onClick={async () => {
+               if (confirm("Czy na pewno chcesz zakończyć tę rozmowę i zaliczyć zgłoszenie jako zakończone? Wtedy dopiero zostaną przyznane punkty.")) {
+                 await fetch(`/api/conversations/${conversationId}/complete`, { method: "POST" });
+                 window.location.reload();
+               }
+             }}
+             className="px-3 py-1.5 bg-primary text-on-primary text-xs font-bold rounded-lg shadow-sm hover:bg-primary/90 active:scale-95 transition-transform"
+           >
+             Zakończ
+           </button>
+        )}
       </header>
 
       {/* Messages */}
@@ -312,31 +325,38 @@ export default function ChatPage({ params }: ChatPageProps) {
       </main>
 
       {/* Input bar */}
-      <div className="fixed bottom-0 left-0 w-full z-50 bg-[#FBFBE2]/95 backdrop-blur-md px-4 pb-8 pt-4 w-full max-w-[390px] md:max-w-full border-t border-outline-variant/20 mx-auto right-0">
-        <div className="flex items-center gap-3">
-          <div className="flex-1 bg-surface-container-highest/60 rounded-[28px] px-4 py-1.5 flex items-center gap-2 border border-outline-variant/20">
-            <input
-              className="flex-1 bg-transparent border-none focus:ring-0 text-sm py-2 placeholder:text-on-surface-variant/50 outline-none"
-              placeholder="Napisz wiadomość..."
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-            />
+      <div className="fixed bottom-0 left-0 w-full z-50 bg-[#f5f5dd]/95 backdrop-blur-md px-4 pb-8 pt-4 w-full max-w-[390px] md:max-w-full border-t border-outline-variant/20 mx-auto right-0">
+        {conversation?.request?.status === "COMPLETED" ? (
+          <div className="w-full text-center p-3 bg-surface-container-high rounded-xl border border-outline-variant/20 text-on-surface-variant text-sm font-bold shadow-inner">
+            <span className="material-symbols-outlined align-middle mr-2 text-primary">done_all</span>
+            Rozmowa archiwalna (Zakończona)
           </div>
-          <button
-            onClick={handleSend}
-            disabled={sending || !input.trim()}
-            className="w-12 h-12 bg-primary text-on-primary rounded-full flex items-center justify-center shadow-lg active:scale-90 duration-200 disabled:opacity-50 disabled:active:scale-100"
-          >
-            <span
-              className="material-symbols-outlined"
-              style={{ fontVariationSettings: "'FILL' 1" }}
+        ) : (
+          <div className="flex items-center gap-3">
+            <div className="flex-1 bg-surface-container-highest/60 rounded-[28px] px-4 py-1.5 flex items-center gap-2 border border-outline-variant/20">
+              <input
+                className="flex-1 bg-transparent border-none focus:ring-0 text-sm py-2 placeholder:text-on-surface-variant/50 outline-none"
+                placeholder="Napisz wiadomość..."
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={handleKeyDown}
+              />
+            </div>
+            <button
+              onClick={handleSend}
+              disabled={sending || !input.trim()}
+              className="w-12 h-12 bg-primary text-on-primary rounded-full flex items-center justify-center shadow-lg active:scale-90 duration-200 disabled:opacity-50 disabled:active:scale-100"
             >
-              send
-            </span>
-          </button>
-        </div>
+              <span
+                className="material-symbols-outlined"
+                style={{ fontVariationSettings: "'FILL' 1" }}
+              >
+                send
+              </span>
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
