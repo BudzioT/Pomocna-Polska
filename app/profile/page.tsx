@@ -27,14 +27,25 @@ export default async function ProfilePage() {
   const requestsCount = await prisma.helpRequest.count({
     where: { authorId: userId, status: "COMPLETED" },
   });
-  const helpsCount = await prisma.helpRequest.count({
-    where: { volunteerId: userId, status: "COMPLETED" },
+  const helpsCount = await prisma.conversation.count({
+    where: { volunteerId: userId, request: { status: "COMPLETED" } },
   });
 
+  const userConversations = await prisma.conversation.findMany({
+    where: { volunteerId: userId },
+    include: { request: true },
+    orderBy: { createdAt: "desc" },
+    take: 5
+  });
+
+  const volunteerRequests = Array.from(
+    new Map(userConversations.map((c: any) => [c.requestId, c.request])).values()
+  );
+
   // Merge and sort history
-  const history = [
+  const historyRequests = [
     ...(user?.requests || []).map((r: any) => ({ ...r, roleInRequest: "AUTHOR" as const })),
-    ...(user?.assignedTasks || []).map((r: any) => ({ ...r, roleInRequest: "VOLUNTEER" as const }))
+    ...volunteerRequests.map((r: any) => ({ ...r, roleInRequest: "VOLUNTEER" as const }))
   ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()).slice(0, 5);
 
   const displayName = user?.name ?? cookieStore.get("user_name")?.value ?? "Użytkownik";
@@ -226,18 +237,18 @@ export default async function ProfilePage() {
         {/* History */}
         <section className="mt-2 mb-2">
           <h3 className="text-lg font-extrabold text-on-surface px-2 mb-4">Ostatnia historia</h3>
-          {history.length === 0 ? (
+          {historyRequests.length === 0 ? (
             <p className="text-sm text-on-surface-variant px-2">Brak historii aktywności.</p>
           ) : (
              <div className="space-y-3">
-              {history.map(item => (
-                <div key={item.id} className="bg-surface-container-lowest p-4 rounded-2xl shadow-sm flex items-start gap-4">
+              {historyRequests.map(item => (
+                <Link key={item.id} href={`/request/${item.id}`} className="bg-surface-container-lowest p-4 rounded-2xl shadow-sm flex items-start gap-4 hover:bg-surface-container-low transition-colors">
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
                     item.roleInRequest === "AUTHOR" ? "bg-secondary-container text-on-secondary-container" : "bg-primary-container text-on-primary-container"
                   }`}>
                     <span className="material-symbols-outlined text-[20px]">{item.roleInRequest === "AUTHOR" ? "front_hand" : "favorite"}</span>
                   </div>
-                  <div>
+                  <div className="flex-1">
                     <h4 className="font-bold text-on-surface text-sm">{item.title}</h4>
                     <p className="text-xs text-on-surface-variant font-medium mt-1">
                       {item.roleInRequest === "AUTHOR" ? "Potrzebuję pomocy" : "Udzielam pomocy"} • {new Date(item.createdAt).toLocaleDateString("pl-PL")}
@@ -245,11 +256,15 @@ export default async function ProfilePage() {
                     {item.status === "OPEN" && (
                       <span className="inline-block mt-2 text-[10px] font-bold uppercase tracking-wider text-secondary bg-secondary/10 px-2 py-1 rounded-full">Aktywne</span>
                     )}
+                    {item.status === "IN_PROGRESS" && (
+                      <span className="inline-block mt-2 text-[10px] font-bold uppercase tracking-wider text-secondary-container bg-secondary-container/20 px-2 py-1 rounded-full">W trakcie</span>
+                    )}
                     {item.status === "COMPLETED" && (
                       <span className="inline-block mt-2 text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/10 px-2 py-1 rounded-full">Zakończone</span>
                     )}
                   </div>
-                </div>
+                  <span className="material-symbols-outlined text-primary/50 self-center">chevron_right</span>
+                </Link>
               ))}
             </div>
           )}

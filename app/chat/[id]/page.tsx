@@ -232,7 +232,7 @@ export default function ChatPage({ params }: ChatPageProps) {
             </div>
           </div>
         </div>
-        {conversation?.request?.status === "IN_PROGRESS" && currentUserId === conversation?.request?.authorId && (
+        {conversation?.request?.status !== "COMPLETED" && currentUserId === conversation?.request?.authorId && (
            <button
              onClick={async () => {
                if (confirm("Czy na pewno chcesz zakończyć tę rozmowę i zaliczyć zgłoszenie jako zakończone? Wtedy dopiero zostaną przyznane punkty.")) {
