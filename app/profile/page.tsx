@@ -5,9 +5,9 @@ import { currentUser } from "@/lib/mockData";
 
 export default function ProfilePage() {
   return (
-    <div className="bg-surface font-body text-on-surface min-h-screen pb-32 max-w-[390px] mx-auto relative">
+    <div className="bg-surface font-body text-on-surface min-h-screen pb-32 w-full max-w-[390px] md:max-w-full mx-auto relative">
       {/* Header */}
-      <header className="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-[#FBFBE2] shadow-sm max-w-[390px]">
+      <header className="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-[#FBFBE2] shadow-sm w-full max-w-[390px] md:max-w-full">
         <div className="flex items-center gap-3">
           <span className="material-symbols-outlined text-[#8F000D] text-2xl">
             volunteer_activism
@@ -91,7 +91,7 @@ export default function ProfilePage() {
           <h3 className="text-lg font-extrabold text-on-surface px-2 mb-4">
             Ostatnia historia
           </h3>
-          <div className="space-y-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             <Link
               href="/chat"
               className="bg-surface-container-lowest p-4 rounded-2xl flex items-center justify-between hover:bg-surface-container-low transition-colors"

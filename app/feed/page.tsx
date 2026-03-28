@@ -4,7 +4,7 @@ import { mockRequests } from "@/lib/mockData";
 
 export default function FeedPage() {
   return (
-    <div className="bg-surface font-body text-on-surface min-h-screen flex flex-col max-w-[390px] mx-auto overflow-x-hidden relative pb-24">
+    <div className="bg-surface font-body text-on-surface min-h-screen flex flex-col w-full max-w-[390px] md:max-w-full mx-auto overflow-x-hidden relative pb-24">
       {/* Background pattern */}
       <div
         className="fixed inset-0 pointer-events-none -z-10"
@@ -17,7 +17,7 @@ export default function FeedPage() {
       />
 
       {/* Header */}
-      <header className="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-[#FBFBE2] shadow-sm max-w-[390px]">
+      <header className="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-[#FBFBE2] shadow-sm w-full max-w-[390px] md:max-w-full">
         <div className="flex items-center gap-2">
           <span className="material-symbols-outlined text-[#8F000D]">
             volunteer_activism
@@ -57,7 +57,7 @@ export default function FeedPage() {
         </section>
 
         {/* Requests list */}
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           <RequestCard
             request={mockRequests[0]}
             href="/feed/modal"

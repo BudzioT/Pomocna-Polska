@@ -14,7 +14,7 @@ export default function AppHeader({
   rightSlot,
 }: AppHeaderProps) {
   return (
-    <header className="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-[#FBFBE2] shadow-sm max-w-[390px]">
+    <header className="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-[#FBFBE2] shadow-sm w-full max-w-[390px] md:max-w-full">
       <div className="flex items-center gap-3">
         {showBack && (
           <Link

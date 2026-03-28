@@ -3,7 +3,7 @@ import { mockRequests } from "@/lib/mockData";
 import type { HelpRequest } from "@/types";
 
 interface RequestDetailsPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 const fullDescriptions: Record<string, string> = {
@@ -11,14 +11,15 @@ const fullDescriptions: Record<string, string> = {
   r2: "Dzień dobry, szukam kogoś, kto mógłby pomóc mi z większymi zakupami w najbliższy czwartek. Mam problem z kolanem i wniesienie siatek na trzecie piętro (bez windy) jest dla mnie obecnie niemożliwe.",
 };
 
-export default function RequestDetailsPage({ params }: RequestDetailsPageProps) {
+export default async function RequestDetailsPage({ params }: RequestDetailsPageProps) {
+  const { id } = await params;
   const request: HelpRequest | undefined = mockRequests.find(
-    (r) => r.id === params.id
+    (r) => r.id === id
   );
 
   if (!request) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen max-w-[390px] mx-auto px-6 text-center">
+      <div className="flex flex-col items-center justify-center min-h-screen w-full max-w-[390px] md:max-w-full mx-auto px-6 text-center">
         <span className="material-symbols-outlined text-6xl text-on-surface-variant mb-4">
           search_off
         </span>
@@ -38,9 +39,9 @@ export default function RequestDetailsPage({ params }: RequestDetailsPageProps) 
   const description = fullDescriptions[request.id] ?? request.description;
 
   return (
-    <div className="bg-surface text-on-surface antialiased min-h-screen pb-40 max-w-[390px] mx-auto relative">
+    <div className="bg-surface text-on-surface antialiased min-h-screen pb-40 w-full max-w-[390px] md:max-w-full mx-auto relative">
       {/* Header */}
-      <nav className="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-[#FBFBE2] shadow-sm max-w-[390px]">
+      <nav className="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-[#FBFBE2] shadow-sm w-full max-w-[390px] md:max-w-full">
         <div className="flex items-center gap-4">
           <Link
             href="/feed"
@@ -106,7 +107,7 @@ export default function RequestDetailsPage({ params }: RequestDetailsPageProps) 
       </main>
 
       {/* Floating CTA */}
-      <div className="fixed bottom-0 left-0 w-full z-50 bg-[#FBFBE2]/95 backdrop-blur-md rounded-t-[24px] shadow-[0_-4px_24px_rgba(0,0,0,0.1)] px-6 pb-8 pt-4 max-w-[390px] mx-auto right-0">
+      <div className="fixed bottom-0 left-0 w-full z-50 bg-[#FBFBE2]/95 backdrop-blur-md rounded-t-[24px] shadow-[0_-4px_24px_rgba(0,0,0,0.1)] px-6 pb-8 pt-4 w-full max-w-[390px] md:max-w-full mx-auto right-0">
         <Link
           href="/feed/modal"
           className="block w-full h-16 bg-primary text-on-primary rounded-xl font-bold text-lg text-center flex items-center justify-center gap-3 shadow-lg shadow-primary/20 active:scale-95 transition-transform duration-150"

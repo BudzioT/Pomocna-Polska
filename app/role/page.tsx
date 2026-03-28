@@ -3,9 +3,9 @@ import Image from "next/image";
 
 export default function RoleSelectionPage() {
   return (
-    <div className="bg-surface font-body text-on-surface min-h-screen flex flex-col max-w-[390px] mx-auto relative overflow-hidden">
+    <div className="bg-surface font-body text-on-surface min-h-screen flex flex-col w-full max-w-[390px] md:max-w-full mx-auto relative overflow-hidden">
       {/* Header */}
-      <header className="fixed top-0 w-full z-50 flex justify-between items-center px-8 py-6 bg-surface/80 backdrop-blur-sm max-w-[390px]">
+      <header className="fixed top-0 w-full z-50 flex justify-between items-center px-8 py-6 bg-surface/80 backdrop-blur-sm w-full max-w-[390px] md:max-w-full">
         <div className="flex items-center gap-2">
           <span className="material-symbols-outlined text-primary text-2xl">
             volunteer_activism
@@ -106,7 +106,7 @@ export default function RoleSelectionPage() {
       </main>
 
       {/* Footer CTA */}
-      <footer className="fixed bottom-0 left-0 w-full px-8 pb-10 pt-6 bg-surface/90 backdrop-blur-md z-50 max-w-[390px] mx-auto right-0">
+      <footer className="fixed bottom-0 left-0 w-full px-8 pb-10 pt-6 bg-surface/90 backdrop-blur-md z-50 w-full max-w-[390px] md:max-w-full mx-auto right-0">
         <div className="max-w-md mx-auto">
           <Link
             href="/register"

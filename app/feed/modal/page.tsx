@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function FeedModalPage() {
   return (
-    <div className="relative mx-auto w-full max-w-[390px] h-screen overflow-hidden bg-surface-dim">
+    <div className="relative mx-auto w-full w-full max-w-[390px] md:max-w-full h-screen overflow-hidden bg-surface-dim">
       {/* Background pattern */}
       <div
         className="absolute inset-0 pointer-events-none"
@@ -15,7 +15,7 @@ export default function FeedModalPage() {
       />
 
       {/* Blurred background content */}
-      <header className="fixed top-0 w-full z-10 flex justify-between items-center px-6 py-4 bg-surface-container-low/80 backdrop-blur-md max-w-[390px]">
+      <header className="fixed top-0 w-full z-10 flex justify-between items-center px-6 py-4 bg-surface-container-low/80 backdrop-blur-md w-full max-w-[390px] md:max-w-full">
         <div className="flex items-center gap-2">
           <span className="material-symbols-outlined text-primary text-2xl">
             volunteer_activism
@@ -40,7 +40,7 @@ export default function FeedModalPage() {
       </main>
 
       {/* Modal overlay */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-inverse-surface/60 backdrop-blur-sm p-4 max-w-[390px] mx-auto">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-inverse-surface/60 backdrop-blur-sm p-4 w-full max-w-[390px] md:max-w-full mx-auto">
         <div className="w-full max-w-[358px] bg-surface-container-lowest rounded-[32px] overflow-hidden shadow-2xl flex flex-col items-center p-8 relative">
           <h2 className="font-headline font-bold text-2xl text-on-surface text-center mt-2 mb-8">
             Zanim zaakceptujesz

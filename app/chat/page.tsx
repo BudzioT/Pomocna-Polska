@@ -30,9 +30,9 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="text-on-surface min-h-screen flex flex-col max-w-[390px] mx-auto bg-surface relative">
+    <div className="text-on-surface min-h-screen flex flex-col w-full max-w-[390px] md:max-w-full mx-auto bg-surface relative">
       {/* Header */}
-      <header className="fixed top-0 w-full z-50 flex justify-between items-center px-4 py-3 bg-[#FBFBE2]/90 backdrop-blur-md shadow-sm max-w-[390px]">
+      <header className="fixed top-0 w-full z-50 flex justify-between items-center px-4 py-3 bg-[#FBFBE2]/90 backdrop-blur-md shadow-sm w-full max-w-[390px] md:max-w-full">
         <div className="flex items-center gap-3">
           <Link
             href="/profile"
@@ -130,7 +130,7 @@ export default function ChatPage() {
       </main>
 
       {/* Input bar */}
-      <div className="fixed bottom-0 left-0 w-full z-50 bg-[#FBFBE2]/95 backdrop-blur-md px-4 pb-8 pt-4 max-w-[390px] border-t border-outline-variant/20 mx-auto right-0">
+      <div className="fixed bottom-0 left-0 w-full z-50 bg-[#FBFBE2]/95 backdrop-blur-md px-4 pb-8 pt-4 w-full max-w-[390px] md:max-w-full border-t border-outline-variant/20 mx-auto right-0">
         <div className="flex items-center gap-3">
           <div className="flex-1 bg-surface-container-highest/60 rounded-[28px] px-4 py-1.5 flex items-center gap-2 border border-outline-variant/20">
             <input

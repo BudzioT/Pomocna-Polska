@@ -12,9 +12,9 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="bg-surface text-on-surface min-h-screen flex flex-col items-center max-w-[390px] mx-auto relative overflow-hidden">
+    <div className="bg-surface text-on-surface min-h-screen flex flex-col items-center w-full max-w-[390px] md:max-w-full mx-auto relative overflow-hidden">
       {/* Header */}
-      <header className="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-[#FBFBE2] shadow-sm max-w-[390px]">
+      <header className="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-[#FBFBE2] shadow-sm w-full max-w-[390px] md:max-w-full">
         <Link
           href="/role"
           className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-surface-container-low transition-colors active:scale-95"
@@ -29,7 +29,7 @@ export default function RegisterPage() {
         <div className="w-10" />
       </header>
 
-      <main className="w-full max-w-[390px] px-8 pt-24 pb-12 flex flex-col flex-grow relative overflow-hidden">
+      <main className="w-full w-full max-w-[390px] md:max-w-full px-8 pt-24 pb-12 flex flex-col flex-grow relative overflow-hidden">
         {/* Decorative background */}
         <div
           className="absolute inset-0 pointer-events-none"

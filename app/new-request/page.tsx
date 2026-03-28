@@ -17,9 +17,9 @@ export default function NewRequestPage() {
   };
 
   return (
-    <div className="bg-surface text-on-surface min-h-screen w-full max-w-[390px] mx-auto shadow-2xl relative overflow-hidden flex flex-col">
+    <div className="bg-surface text-on-surface min-h-screen w-full w-full max-w-[390px] md:max-w-full mx-auto shadow-2xl relative overflow-hidden flex flex-col">
       {/* Header */}
-      <header className="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-[#FBFBE2] shadow-sm max-w-[390px]">
+      <header className="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-[#FBFBE2] shadow-sm w-full max-w-[390px] md:max-w-full">
         <div className="flex items-center gap-3">
           <span className="material-symbols-outlined text-[#8F000D]">
             volunteer_activism
@@ -61,66 +61,68 @@ export default function NewRequestPage() {
             />
           </section>
 
-          {/* Help type toggle */}
-          <section className="bg-surface-container-low p-6 rounded-xl space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-on-surface font-bold">Rodzaj pomocy</span>
-              <div className="flex bg-surface-container-highest p-1 rounded-full w-48 relative">
-                <div
-                  className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-primary rounded-full transition-all duration-300 ${
-                    helpType === "in-person" ? "left-1" : "left-[calc(50%+2px)]"
-                  }`}
-                />
-                <button
-                  onClick={() => setHelpType("in-person")}
-                  className={`relative z-10 flex-1 flex items-center justify-center gap-2 py-2 transition-colors ${
-                    helpType === "in-person"
-                      ? "text-white"
-                      : "text-on-surface-variant"
-                  }`}
-                >
-                  <span className="material-symbols-outlined text-[20px]">
-                    home
-                  </span>
-                </button>
-                <button
-                  onClick={() => setHelpType("remote")}
-                  className={`relative z-10 flex-1 flex items-center justify-center gap-2 py-2 transition-colors ${
-                    helpType === "remote"
-                      ? "text-white"
-                      : "text-on-surface-variant"
-                  }`}
-                >
-                  <span className="material-symbols-outlined text-[20px]">
-                    phone_in_talk
-                  </span>
-                </button>
+          <div className="flex flex-col md:flex-row md:justify-between items-stretch md:items-start gap-8 md:gap-12 w-full">
+            {/* Help type toggle */}
+            <section className="bg-surface-container-low p-6 rounded-xl space-y-4 flex-1 w-full">
+              <div className="flex items-center justify-between">
+                <span className="text-on-surface font-bold">Rodzaj pomocy</span>
+                <div className="flex bg-surface-container-highest p-1 rounded-full w-48 relative">
+                  <div
+                    className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-primary rounded-full transition-all duration-300 ${
+                      helpType === "in-person" ? "left-1" : "left-[calc(50%+2px)]"
+                    }`}
+                  />
+                  <button
+                    onClick={() => setHelpType("in-person")}
+                    className={`relative z-10 flex-1 flex items-center justify-center gap-2 py-2 transition-colors ${
+                      helpType === "in-person"
+                        ? "text-white"
+                        : "text-on-surface-variant"
+                    }`}
+                  >
+                    <span className="material-symbols-outlined text-[20px]">
+                      home
+                    </span>
+                  </button>
+                  <button
+                    onClick={() => setHelpType("remote")}
+                    className={`relative z-10 flex-1 flex items-center justify-center gap-2 py-2 transition-colors ${
+                      helpType === "remote"
+                        ? "text-white"
+                        : "text-on-surface-variant"
+                    }`}
+                  >
+                    <span className="material-symbols-outlined text-[20px]">
+                      phone_in_talk
+                    </span>
+                  </button>
+                </div>
               </div>
-            </div>
-            <p className="text-sm text-on-surface-variant font-medium">
-              {helpType === "in-person"
-                ? "Pomoc na miejscu — wolontariusz przyjedzie do Ciebie."
-                : "Pomoc zdalna — przez telefon lub wideorozmowę."}
-            </p>
-          </section>
-        </div>
+              <p className="text-sm text-on-surface-variant font-medium">
+                {helpType === "in-person"
+                  ? "Pomoc na miejscu — wolontariusz przyjedzie do Ciebie."
+                  : "Pomoc zdalna — przez telefon lub wideorozmowę."}
+              </p>
+            </section>
 
-        {/* Actions */}
-        <div className="mt-12 flex gap-4">
-          <Link
-            href="/senior-home"
-            className="flex-1 py-4 px-6 rounded-xl font-bold text-on-surface bg-surface-container-high hover:bg-surface-variant transition-colors flex items-center justify-center gap-2"
-          >
-            <span className="material-symbols-outlined">arrow_back</span>
-            Wstecz
-          </Link>
-          <button
-            onClick={handleSubmit}
-            className="flex-[2] py-4 px-6 rounded-xl font-bold text-on-primary bg-primary hover:bg-primary-container transition-all shadow-lg flex items-center justify-center gap-2 active:scale-95"
-          >
-            Gotowe
-            <span className="material-symbols-outlined">check</span>
-          </button>
+            {/* Actions */}
+            <div className="flex flex-row md:flex-col gap-4 md:w-[40%] shrink-0 md:justify-end mt-4 md:mt-0">
+              <Link
+                href="/senior-home"
+                className="flex-1 md:flex-none py-4 px-6 rounded-xl font-bold text-on-surface bg-surface-container-high hover:bg-surface-variant transition-colors flex items-center justify-center gap-2"
+              >
+                <span className="material-symbols-outlined">arrow_back</span>
+                Wstecz
+              </Link>
+              <button
+                onClick={handleSubmit}
+                className="flex-[2] md:flex-none py-4 px-6 rounded-xl font-bold text-on-primary bg-primary hover:bg-primary-container transition-all shadow-lg flex items-center justify-center gap-2 active:scale-95"
+              >
+                Gotowe
+                <span className="material-symbols-outlined">check</span>
+              </button>
+            </div>
+          </div>
         </div>
       </main>
 

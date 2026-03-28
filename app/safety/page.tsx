@@ -15,7 +15,7 @@ const rules: SafetyRule[] = [
 
 export default function SafetyPage() {
   return (
-    <div className="relative mx-auto w-full max-w-[390px] h-screen bg-surface-bright flex flex-col overflow-hidden">
+    <div className="relative mx-auto w-full w-full max-w-[390px] md:max-w-full h-screen bg-surface-bright flex flex-col overflow-hidden">
       {/* Hero image */}
       <div className="relative w-full h-[32%] overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-surface-bright/40 z-10" />

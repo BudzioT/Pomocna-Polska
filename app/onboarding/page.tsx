@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function OnboardingPage() {
   return (
-    <main className="w-full max-w-[390px] h-screen bg-surface relative flex flex-col overflow-hidden shadow-2xl mx-auto">
+    <main className="w-full w-full max-w-[390px] md:max-w-full h-screen bg-surface relative flex flex-col overflow-hidden shadow-2xl mx-auto">
       {/* Hero image section */}
       <section className="relative h-[55%] w-full flex flex-col items-center justify-center p-8">
         <div className="absolute -top-12 -right-12 w-64 h-64 bg-primary-container/10 rounded-full blur-3xl" />

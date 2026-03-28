@@ -3,9 +3,9 @@ import BottomNav from "@/components/layout/BottomNav";
 
 export default function SeniorHomePage() {
   return (
-    <div className="bg-surface text-on-surface antialiased overflow-x-hidden min-h-screen max-w-[390px] mx-auto relative pb-32">
+    <div className="bg-surface text-on-surface antialiased overflow-x-hidden min-h-screen w-full max-w-[390px] md:max-w-full mx-auto relative pb-32">
       {/* Header */}
-      <header className="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-5 bg-[#FBFBE2] shadow-sm max-w-[390px]">
+      <header className="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-5 bg-[#FBFBE2] shadow-sm w-full max-w-[390px] md:max-w-full">
         <div className="flex items-center gap-3">
           <span
             className="material-symbols-outlined text-[#8F000D]"

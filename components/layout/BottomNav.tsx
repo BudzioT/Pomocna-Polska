@@ -20,7 +20,7 @@ export default function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed bottom-0 left-0 w-full z-40 flex justify-around items-center px-4 pb-6 pt-3 bg-[#FBFBE2]/90 backdrop-blur-md rounded-t-[24px] border-t border-[#E2BEBA]/20 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] max-w-[390px] mx-auto right-0">
+    <nav className="fixed bottom-0 left-0 w-full z-40 flex justify-around items-center px-4 pb-6 pt-3 bg-[#FBFBE2]/90 backdrop-blur-md rounded-t-[24px] border-t border-[#E2BEBA]/20 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] w-full max-w-[390px] md:max-w-full mx-auto right-0">
       {navItems.map(({ href, icon, label }) => {
         const isActive = pathname === href;
         return (
