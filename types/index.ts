@@ -29,6 +29,9 @@ export type HelpCategory =
   | "medicine"
   | "transport"
   | "companionship"
+  | "education"
+  | "animals"
+  | "household"
   | "other";
 
 export interface Message {

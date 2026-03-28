@@ -33,6 +33,9 @@ enum HelpCategory {
   MEDICINE
   TRANSPORT
   COMPANIONSHIP
+  EDUCATION
+  ANIMALS
+  HOUSEHOLD
   OTHER
 }
 
@@ -66,9 +69,8 @@ model HelpRequest {
 
   latitude  Float?
   longitude Float?
-  address   String?
-
-  createdAt DateTime @default(now())
+  address   String?   @db.Text
+  createdAt DateTime  @default(now())
   updatedAt DateTime @updatedAt
 
   authorId String
